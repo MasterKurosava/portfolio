@@ -1,0 +1,95 @@
+{
+  "meta": {
+    "title": "Mikhail Kalachev — Fullstack Developer | Portfolio",
+    "description": "Fullstack developer with 4+ years of experience: React, Next.js, Vue, Laravel, automation, and architecture for international platforms. Portfolio, case studies, and contact.",
+    "keywords": [
+      "Mikhail Kalachev",
+      "fullstack developer",
+      "developer portfolio",
+      "React developer",
+      "Next.js developer",
+      "Vue developer",
+      "Laravel developer",
+      "TypeScript",
+      "web development",
+      "software architecture",
+      "remote developer",
+      "international projects"
+    ],
+    "ogImageAlt": "Mikhail Kalachev — Fullstack Developer"
+  },
+  "nav": {
+    "skip": "Skip to content",
+    "journey": "Experience",
+    "expertise": "Expertise",
+    "impact": "Impact",
+    "tech": "Competencies",
+    "contact": "Contact"
+  },
+  "theme": {
+    "toggle": "Toggle theme",
+    "switchToDark": "Dark theme",
+    "switchToLight": "Light theme"
+  },
+  "hero": {
+    "role": "Fullstack Developer",
+    "tagline": "I build digital products from idea to production — from user interfaces to architecture and infrastructure.",
+    "bio": [
+      "Over 4 years developing commercial web platforms, internal automation systems, and high-load services. I've worked on international real estate platforms, enterprise products, AI integrations, and complex business processes.",
+      "I'm confident across the full stack: designing server architecture, building APIs and business logic, developing modern interfaces with React and Vue, and setting up CI/CD and infrastructure.",
+      "For me, a good product isn't just a beautiful interface or solid backend alone. It's a system that stays clear for developers, convenient for users, and able to scale with the business."
+    ],
+    "focus": [
+      "React · Next.js · Vue 3 · TypeScript",
+      "Laravel · PHP · Inertia.js · Django",
+      "Architecture · SSR · WebSockets · CI/CD",
+      "MySQL · SQL · Redis · Postgres"
+    ],
+    "location": "Open to remote work and international projects"
+  },
+  "manifesto": {
+    "label": "Approach",
+    "title": "Systems, not components",
+    "paragraphs": [
+      "For me, development is building a system where every part works predictably and is ready to grow over years.",
+      "My core skill is diving into business domains and finding solutions that deliver real value."
+    ]
+  },
+  "roadmap": {
+    "label": "Work experience",
+    "title": "Where I built products",
+    "subtitle": "Each project — new scale and new responsibility"
+  },
+  "expertise": {
+    "label": "Expertise",
+    "title": "How I design systems",
+    "subtitle": "Real experience across product layers — no abstract diagrams"
+  },
+  "impact": {
+    "label": "Impact",
+    "title": "What changed because of my work",
+    "subtitle": "Measurable business impact — not code metrics, but effects for people and processes"
+  },
+  "tech": {
+    "label": "Competencies",
+    "title": "Architectures and technologies I've shipped",
+    "subtitle": "Not just a tech stack — real systems I designed, evolved, and brought to production.",
+    "resultsLabel": "Real outcomes"
+  },
+  "testimonials": {
+    "placeholder": "TODO: replace with a real testimonial"
+  },
+  "finale": {
+    "label": "Contact",
+    "title": "Let's discuss your product",
+    "subtitle": "Looking for projects where architecture, quality, and long-term growth matter",
+    "phone": "+7 777 307 84 05",
+    "telegram": "Telegram",
+    "whatsapp": "WhatsApp",
+    "links": {
+      "phone": "tel:+77773078405",
+      "telegram": "https://t.me/MasterKurosava",
+      "whatsapp": "https://wa.me/77773078405"
+    }
+  }
+}

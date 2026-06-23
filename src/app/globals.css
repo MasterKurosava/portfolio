@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --theme-background: #f7f8fc;
+  --theme-foreground: #0c0c14;
+  --theme-muted: #5c5c70;
+  --theme-accent: #0088a8;
+  --theme-accent-secondary: #6d28d9;
+  --theme-surface: #eceef4;
+  --theme-border: rgba(12, 12, 20, 0.1);
+  --theme-elevated: rgba(12, 12, 20, 0.045);
+  --theme-elevated-strong: rgba(12, 12, 20, 0.08);
+  --theme-shadow: rgba(12, 12, 20, 0.1);
+  --theme-shadow-strong: rgba(12, 12, 20, 0.18);
+  --theme-inset-highlight: rgba(255, 255, 255, 0.85);
+  --theme-muted-fg: rgba(12, 12, 20, 0.4);
+  --theme-hero-filter: blur(3px) saturate(0.45) brightness(1.05);
+  --theme-grain-opacity: 0.022;
+  --theme-selection-bg: rgba(0, 136, 168, 0.22);
+  --theme-selection-fg: #0c0c14;
+  --theme-card-inner: rgba(0, 0, 0, 0.04);
+}
+
+.dark {
+  --theme-background: #050508;
+  --theme-foreground: #f0f0f5;
+  --theme-muted: #8a8a9a;
+  --theme-accent: #00d4ff;
+  --theme-accent-secondary: #7c3aed;
+  --theme-surface: #0c0c14;
+  --theme-border: rgba(255, 255, 255, 0.08);
+  --theme-elevated: rgba(255, 255, 255, 0.05);
+  --theme-elevated-strong: rgba(255, 255, 255, 0.09);
+  --theme-shadow: rgba(0, 0, 0, 0.28);
+  --theme-shadow-strong: rgba(0, 0, 0, 0.45);
+  --theme-inset-highlight: rgba(255, 255, 255, 0.08);
+  --theme-muted-fg: rgba(255, 255, 255, 0.35);
+  --theme-hero-filter: blur(3px) saturate(0.3) brightness(0.5);
+  --theme-grain-opacity: 0.04;
+  --theme-selection-bg: rgba(0, 212, 255, 0.3);
+  --theme-selection-fg: #fff;
+  --theme-card-inner: rgba(255, 255, 255, 0.04);
+}
+
+@theme inline {
+  --color-background: var(--theme-background);
+  --color-foreground: var(--theme-foreground);
+  --color-muted: var(--theme-muted);
+  --color-accent: var(--theme-accent);
+  --color-accent-secondary: var(--theme-accent-secondary);
+  --color-surface: var(--theme-surface);
+  --color-border: var(--theme-border);
+  --color-elevated: var(--theme-elevated);
+  --color-elevated-strong: var(--theme-elevated-strong);
+  --font-display: var(--font-syne);
+  --font-mono: var(--font-jetbrains);
+  --font-serif: var(--font-cormorant);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+  color-scheme: dark;
+}
+
+html:not(.dark) {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-display), system-ui, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+::selection {
+  background: var(--theme-selection-bg);
+  color: var(--theme-selection-fg);
+}
+
+.grain {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  opacity: var(--theme-grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+.hero-canvas-wrap {
+  filter: var(--theme-hero-filter);
+}
+
+.section-padding {
+  @apply px-4 sm:px-6 md:px-12 lg:px-20;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--theme-accent) 0%, var(--theme-accent-secondary) 50%, var(--theme-foreground) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.expertise-card {
+  background: linear-gradient(
+    135deg,
+    var(--theme-elevated-strong) 0%,
+    var(--theme-elevated) 40%,
+    transparent 100%
+  );
+  box-shadow:
+    0 4px 24px var(--theme-shadow),
+    inset 0 1px 0 var(--theme-inset-highlight);
+}
+
+.expertise-card.is-active {
+  box-shadow:
+    0 12px 40px var(--theme-shadow-strong),
+    inset 0 1px 0 var(--theme-inset-highlight);
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
