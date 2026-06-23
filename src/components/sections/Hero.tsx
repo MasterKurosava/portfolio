@@ -10,6 +10,7 @@ import { useDeviceTier } from "@/hooks/useDeviceTier";
 import { HeroParticles2D } from "./HeroParticles2D";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { FocusTechLine } from "@/components/ui/tech-text";
+import { Phone, Send, MessageCircle } from "lucide-react";
 
 const HeroCore = dynamic(() => import("@/components/canvas/HeroCore").then((m) => m.HeroCore), {
   ssr: false,
@@ -21,6 +22,7 @@ gsap.registerPlugin(ScrollTrigger);
 export function Hero() {
   const t = useTranslations("hero");
   const m = useTranslations("manifesto");
+  const f = useTranslations("finale");
   const sectionRef = useRef<HTMLElement>(null);
   const heroMainRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -28,6 +30,11 @@ export function Hero() {
   const bio = t.raw("bio") as string[];
   const focus = t.raw("focus") as string[];
   const manifestoParagraphs = m.raw("paragraphs") as string[];
+  const links = f.raw("links") as {
+    phone: string;
+    telegram: string;
+    whatsapp: string;
+  };
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -89,6 +96,34 @@ export function Hero() {
                   sizes="(max-width: 1024px) 180px, 200px"
                 />
                 <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-border" />
+              </div>
+
+              <div className="mx-auto mt-4 flex w-full max-w-[240px] flex-col gap-2.5 sm:mx-0 sm:mt-3 sm:w-[140px] sm:max-w-none sm:gap-1.5 lg:w-[180px] xl:w-[200px]">
+                <a
+                  href={links.phone}
+                  className="inline-flex items-center gap-2 py-0.5 font-mono text-sm text-foreground/80 transition-colors hover:text-accent sm:gap-1.5 sm:py-0 sm:text-[11px]"
+                >
+                  <Phone className="h-4 w-4 shrink-0 sm:h-3 sm:w-3" />
+                  <span>{f("phone")}</span>
+                </a>
+                <a
+                  href={links.telegram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 py-0.5 font-mono text-sm text-foreground/80 transition-colors hover:text-accent sm:gap-1.5 sm:py-0 sm:text-[11px]"
+                >
+                  <Send className="h-4 w-4 shrink-0 sm:h-3 sm:w-3" />
+                  {f("telegram")}
+                </a>
+                <a
+                  href={links.whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 py-0.5 font-mono text-sm text-foreground/80 transition-colors hover:text-accent sm:gap-1.5 sm:py-0 sm:text-[11px]"
+                >
+                  <MessageCircle className="h-4 w-4 shrink-0 sm:h-3 sm:w-3" />
+                  {f("whatsapp")}
+                </a>
               </div>
             </div>
 

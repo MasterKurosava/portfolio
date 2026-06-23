@@ -67,7 +67,7 @@ export function TestimonialCard({
           className="mt-4 inline-flex items-center gap-2 font-mono text-xs text-accent transition-colors hover:text-accent/80"
         >
           <MessageCircle className="h-3.5 w-3.5" />
-          {locale === "ru" ? "Связаться" : "Contact"}
+          {testimonial.telegram ?? (locale === "ru" ? "Связаться" : "Contact")}
         </a>
       )}
     </aside>
