@@ -8,7 +8,7 @@ import { getSiteUrl, localeUrl } from "@/lib/site";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import { Header } from "@/components/layout/Header";
 import { ThemeScript } from "@/components/layout/ThemeScript";
-import { SkipLink, ScrollRestorer } from "@/components/layout/SkipLink";
+import { SkipLink } from "@/components/layout/SkipLink";
 import { PersonJsonLd } from "@/components/seo/PersonJsonLd";
 import "../globals.css";
 
@@ -129,7 +129,6 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <SmoothScrollProvider>
             <SkipLink />
-            <ScrollRestorer />
             <div className="grain" aria-hidden />
             <Header />
             <main id="main">{children}</main>

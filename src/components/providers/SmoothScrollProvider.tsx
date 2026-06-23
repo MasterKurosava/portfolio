@@ -7,10 +7,37 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+function restoreScrollPosition(scrollTo: (y: number) => void) {
+  const saved = sessionStorage.getItem("scrollY");
+  if (!saved) return;
+
+  const y = parseInt(saved, 10);
+  if (Number.isNaN(y)) {
+    sessionStorage.removeItem("scrollY");
+    return;
+  }
+
+  sessionStorage.removeItem("scrollY");
+
+  const apply = () => {
+    scrollTo(y);
+    ScrollTrigger.refresh();
+    requestAnimationFrame(() => ScrollTrigger.update());
+  };
+
+  requestAnimationFrame(apply);
+  window.setTimeout(apply, 100);
+  window.setTimeout(() => ScrollTrigger.refresh(), 300);
+}
+
 export function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reducedMotion) return;
+
+    if (reducedMotion) {
+      restoreScrollPosition((y) => window.scrollTo(0, y));
+      return;
+    }
 
     const lenis = new Lenis({
       duration: 1.2,
@@ -45,6 +72,8 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
     });
 
     ScrollTrigger.defaults({ scroller: document.documentElement });
+
+    restoreScrollPosition((y) => lenis.scrollTo(y, { immediate: true }));
 
     const refresh = () => ScrollTrigger.refresh();
     window.addEventListener("resize", refresh);
