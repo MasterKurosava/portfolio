@@ -40,7 +40,7 @@ export const careerStations: CareerStation[] = [
     role: { ru: "Frontend / Fullstack Developer", en: "Frontend / Fullstack Developer" },
     theme: "ecosystem",
     summary: {
-      ru: "За 4 года прошёл путь от UI-задач до ключевых модулей международной платформы: поиск, каталоги, автоматизация данных и миграция на Vue 3 — без остановки бизнеса.",
+      ru: "За 4 лет прошёл путь от UI-задач до ключевых модулей международной платформы: поиск, каталоги, автоматизация данных и миграция на Vue 3 — без остановки бизнеса.",
       en: "Over 4 years, grew from UI tasks to owning key modules of an international platform: search, catalogs, data automation, and Vue 3 migration — all without business downtime.",
     },
     narrative: {

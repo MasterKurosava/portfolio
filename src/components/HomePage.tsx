@@ -9,9 +9,9 @@ export function HomePage() {
   return (
     <>
       <Hero />
+      <ImpactSection />
       <RoadmapJourney />
       <ExpertiseSection />
-      <ImpactSection />
       <ExpertiseMap />
       <Finale />
     </>

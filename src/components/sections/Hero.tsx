@@ -9,7 +9,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useDeviceTier } from "@/hooks/useDeviceTier";
 import { HeroParticles2D } from "./HeroParticles2D";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
-import { TechText, FocusTechLine } from "@/components/ui/tech-text";
+import { FocusTechLine } from "@/components/ui/tech-text";
 
 const HeroCore = dynamic(() => import("@/components/canvas/HeroCore").then((m) => m.HeroCore), {
   ssr: false,
@@ -99,19 +99,23 @@ export function Hero() {
               <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl lg:text-5xl">
                 Михаил Калачёв
               </h1>
-              <p className="mt-2 text-base text-foreground/90 md:text-lg">{t("tagline")}</p>
+              <p className="mt-3 max-w-2xl text-base leading-relaxed text-foreground/85 md:text-lg">
+                {t("summary")}
+              </p>
 
-              <div className="mt-4 space-y-2">
-                {bio.map((paragraph, i) => (
-                  <TechText
-                    key={i}
-                    as="p"
-                    className="max-w-2xl text-sm leading-relaxed text-foreground/75"
+              <ul className="mt-4 space-y-1.5">
+                {bio.map((item) => (
+                  <li
+                    key={item}
+                    className="flex gap-2 text-sm text-foreground/70 md:text-[15px]"
                   >
-                    {paragraph}
-                  </TechText>
+                    <span className="shrink-0 text-accent" aria-hidden>
+                      —
+                    </span>
+                    <span>{item}</span>
+                  </li>
                 ))}
-              </div>
+              </ul>
 
               <div className="mt-5 grid gap-2 sm:grid-cols-2">
                 {focus.map((item) => (

@@ -7,9 +7,9 @@ import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 const sections = [
+  { id: "impact", href: "#impact" },
   { id: "journey", href: "#roadmap" },
   { id: "expertise", href: "#expertise" },
-  { id: "impact", href: "#impact" },
   { id: "tech", href: "#tech" },
   { id: "contact", href: "#finale" },
 ] as const;

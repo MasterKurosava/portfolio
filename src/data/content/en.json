@@ -33,11 +33,11 @@
   },
   "hero": {
     "role": "Fullstack Developer",
-    "tagline": "I build digital products from idea to production — from user interfaces to architecture and infrastructure.",
+    "summary": "I build digital products from idea to production — from UI to architecture and infrastructure. 4+ years shipping commercial platforms, automation, and international products.",
     "bio": [
-      "Over 4 years developing commercial web platforms, internal automation systems, and high-load services. I've worked on international real estate platforms, enterprise products, AI integrations, and complex business processes.",
-      "I'm confident across the full stack: designing server architecture, building APIs and business logic, developing modern interfaces with React and Vue, and setting up CI/CD and infrastructure.",
-      "For me, a good product isn't just a beautiful interface or solid backend alone. It's a system that stays clear for developers, convenient for users, and able to scale with the business."
+      "4+ years — platforms, automation, international products",
+      "Full stack: APIs, React/Vue, CI/CD",
+      "Systems built to scale with the business"
     ],
     "focus": [
       "React · Next.js · Vue 3 · TypeScript",
