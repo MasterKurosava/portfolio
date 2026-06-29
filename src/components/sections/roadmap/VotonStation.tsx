@@ -65,12 +65,18 @@ export function VotonStation({
       bull: Math.random() > 0.45,
     }));
 
-    const resize = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
+    const resize = (width: number, height: number) => {
+      canvas.width = width;
+      canvas.height = height;
     };
-    resize();
-    window.addEventListener("resize", resize);
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      const { width, height } = entry.contentRect;
+      if (width > 0 && height > 0) resize(width, height);
+    });
+    observer.observe(canvas);
 
     const draw = () => {
       const w = canvas.width;
@@ -105,7 +111,7 @@ export function VotonStation({
 
     return () => {
       cancelAnimationFrame(animId);
-      window.removeEventListener("resize", resize);
+      observer.disconnect();
     };
   }, [isMobile]);
 

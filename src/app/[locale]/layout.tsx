@@ -4,7 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/lib/i18n/routing";
-import { getSiteUrl, localeUrl } from "@/lib/site";
+import { resolveSiteOrigin, buildPageAlternates } from "@/lib/site";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import { Header } from "@/components/layout/Header";
 import { ThemeScript } from "@/components/layout/ThemeScript";
@@ -42,12 +42,14 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "meta" });
   const keywords = t.raw("keywords") as string[];
-  const pageUrl = localeUrl(locale);
+  const siteOrigin = await resolveSiteOrigin();
+  const alternates = buildPageAlternates(locale, siteOrigin);
+  const pageUrl = alternates.canonical;
   const ogLocale = locale === "ru" ? "ru_RU" : "en_US";
   const alternateOgLocale = locale === "ru" ? "en_US" : "ru_RU";
 
   return {
-    metadataBase: new URL(getSiteUrl()),
+    metadataBase: new URL(siteOrigin),
     title: t("title"),
     description: t("description"),
     keywords,
@@ -63,14 +65,7 @@ export async function generateMetadata({
         "max-snippet": -1,
       },
     },
-    alternates: {
-      canonical: pageUrl,
-      languages: {
-        ru: localeUrl("ru"),
-        en: localeUrl("en"),
-        "x-default": localeUrl(routing.defaultLocale),
-      },
-    },
+    alternates,
     icons: {
       icon: "/images/icon.ico",
     },
@@ -114,6 +109,7 @@ export default async function LocaleLayout({
   }
 
   const messages = await getMessages();
+  const siteOrigin = await resolveSiteOrigin();
 
   return (
     <html
@@ -125,7 +121,7 @@ export default async function LocaleLayout({
         <ThemeScript />
       </head>
       <body className="font-display antialiased">
-        <PersonJsonLd locale={locale} />
+        <PersonJsonLd locale={locale} siteOrigin={siteOrigin} />
         <NextIntlClientProvider messages={messages}>
           <SmoothScrollProvider>
             <SkipLink />

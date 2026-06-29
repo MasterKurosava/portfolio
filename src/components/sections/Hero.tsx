@@ -26,6 +26,7 @@ export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const heroMainRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [showCanvas, setShowCanvas] = useState(false);
   const tier = useDeviceTier();
   const bio = t.raw("bio") as string[];
   const focus = t.raw("focus") as string[];
@@ -59,6 +60,29 @@ export function Hero() {
     };
   }, []);
 
+  useEffect(() => {
+    if (tier === "low") {
+      setShowCanvas(false);
+      return;
+    }
+
+    let idleOrTimerId: number | ReturnType<typeof setTimeout>;
+
+    if ("requestIdleCallback" in window) {
+      idleOrTimerId = requestIdleCallback(() => setShowCanvas(true), { timeout: 2500 });
+    } else {
+      idleOrTimerId = setTimeout(() => setShowCanvas(true), 100);
+    }
+
+    return () => {
+      if ("requestIdleCallback" in window) {
+        cancelIdleCallback(idleOrTimerId as number);
+      } else {
+        clearTimeout(idleOrTimerId);
+      }
+    };
+  }, [tier]);
+
   return (
     <section
       ref={sectionRef}
@@ -74,9 +98,9 @@ export function Hero() {
         <div className="absolute -right-[20%] top-1/2 hidden h-[120%] w-[80%] -translate-y-1/2 scale-90 hero-canvas-wrap md:block">
           {tier === "low" ? (
             <HeroParticles2D scrollProgress={scrollProgress} />
-          ) : (
+          ) : showCanvas ? (
             <HeroCore scrollProgress={scrollProgress} />
-          )}
+          ) : null}
         </div>
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/40" />
         <div className="absolute inset-x-0 top-0 bottom-24 bg-gradient-to-t from-transparent via-transparent to-background/60" />

@@ -13,7 +13,13 @@ const KNOWS_ABOUT = [
   "CI/CD",
 ];
 
-export function PersonJsonLd({ locale }: { locale: string }) {
+export function PersonJsonLd({
+  locale,
+  siteOrigin,
+}: {
+  locale: string;
+  siteOrigin: string;
+}) {
   const isRu = locale === "ru";
 
   const data = {
@@ -21,32 +27,32 @@ export function PersonJsonLd({ locale }: { locale: string }) {
     "@graph": [
       {
         "@type": "Person",
-        "@id": `${absoluteUrl()}/#person`,
+        "@id": `${absoluteUrl("", siteOrigin)}/#person`,
         name: isRu ? "Михаил Калачёв" : "Mikhail Kalachev",
         alternateName: isRu ? "Mikhail Kalachev" : "Михаил Калачёв",
         jobTitle: "Fullstack Developer",
-        url: localeUrl(locale),
-        image: absoluteUrl("/images/profile.png"),
+        url: localeUrl(locale, "/", siteOrigin),
+        image: absoluteUrl("/images/profile.png", siteOrigin),
         sameAs: ["https://t.me/MasterKurosava"],
         knowsAbout: KNOWS_ABOUT,
       },
       {
         "@type": "WebSite",
-        "@id": `${absoluteUrl()}/#website`,
+        "@id": `${absoluteUrl("", siteOrigin)}/#website`,
         name: isRu ? "Михаил Калачёв — Fullstack Developer" : "Mikhail Kalachev — Fullstack Developer",
-        url: absoluteUrl(),
+        url: absoluteUrl("", siteOrigin),
         inLanguage: ["ru", "en"],
-        publisher: { "@id": `${absoluteUrl()}/#person` },
+        publisher: { "@id": `${absoluteUrl("", siteOrigin)}/#person` },
       },
       {
         "@type": "ProfilePage",
-        "@id": `${localeUrl(locale)}#profile`,
-        url: localeUrl(locale),
+        "@id": `${localeUrl(locale, "/", siteOrigin)}#profile`,
+        url: localeUrl(locale, "/", siteOrigin),
         name: isRu ? "Портфолио Михаила Калачёва" : "Mikhail Kalachev Portfolio",
         inLanguage: locale,
-        isPartOf: { "@id": `${absoluteUrl()}/#website` },
-        about: { "@id": `${absoluteUrl()}/#person` },
-        mainEntity: { "@id": `${absoluteUrl()}/#person` },
+        isPartOf: { "@id": `${absoluteUrl("", siteOrigin)}/#website` },
+        about: { "@id": `${absoluteUrl("", siteOrigin)}/#person` },
+        mainEntity: { "@id": `${absoluteUrl("", siteOrigin)}/#person` },
       },
     ],
   };

@@ -73,6 +73,9 @@ function ExpertiseCard({
   index: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const rectRef = useRef<DOMRect | null>(null);
+  const moveRafRef = useRef(0);
+  const pendingPointerRef = useRef<{ x: number; y: number } | null>(null);
   const [hovered, setHovered] = useState(false);
   const [tapped, setTapped] = useState(false);
   const reducedMotion = useReducedMotion();
@@ -89,16 +92,34 @@ function ExpertiseCard({
 
   const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!enableTilt || !ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    rotateX.set(-y * TILT);
-    rotateY.set(x * TILT);
-    parallaxX.set(x * PARALLAX);
-    parallaxY.set(y * PARALLAX);
+    pendingPointerRef.current = { x: e.clientX, y: e.clientY };
+    if (moveRafRef.current) return;
+
+    moveRafRef.current = requestAnimationFrame(() => {
+      moveRafRef.current = 0;
+      const pending = pendingPointerRef.current;
+      if (!pending || !ref.current) return;
+
+      if (!rectRef.current) {
+        rectRef.current = ref.current.getBoundingClientRect();
+      }
+      const rect = rectRef.current;
+      const x = (pending.x - rect.left) / rect.width - 0.5;
+      const y = (pending.y - rect.top) / rect.height - 0.5;
+      rotateX.set(-y * TILT);
+      rotateY.set(x * TILT);
+      parallaxX.set(x * PARALLAX);
+      parallaxY.set(y * PARALLAX);
+    });
   };
 
   const handleLeave = () => {
+    if (moveRafRef.current) {
+      cancelAnimationFrame(moveRafRef.current);
+      moveRafRef.current = 0;
+    }
+    pendingPointerRef.current = null;
+    rectRef.current = null;
     setHovered(false);
     rotateX.set(0);
     rotateY.set(0);
@@ -115,7 +136,10 @@ function ExpertiseCard({
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.55, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
       onMouseMove={handleMove}
-      onMouseEnter={() => setHovered(true)}
+      onMouseEnter={() => {
+        rectRef.current = ref.current?.getBoundingClientRect() ?? null;
+        setHovered(true);
+      }}
       onMouseLeave={handleLeave}
       onClick={() => setTapped((v) => !v)}
       style={
