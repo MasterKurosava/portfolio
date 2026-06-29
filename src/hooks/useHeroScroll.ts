@@ -17,9 +17,13 @@ export function useHeroScroll(
 
     const update = () => {
       rafId = 0;
+      const section = sectionRef.current;
+      if (!section) return;
+
       const rect = section.getBoundingClientRect();
-      const scrollable = Math.max(rect.height - window.innerHeight, 1);
-      const progress = Math.min(1, Math.max(0, -rect.top / scrollable));
+      const sectionHeight = section.offsetHeight;
+      const progress =
+        sectionHeight > 0 ? Math.min(1, Math.max(0, -rect.top / sectionHeight)) : 0;
       scrollProgressRef.current = progress;
 
       const heroMain = heroMainRef.current;
