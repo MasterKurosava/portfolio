@@ -5,7 +5,7 @@ import { getMessages, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/lib/i18n/routing";
 import { resolveSiteOrigin, buildPageAlternates } from "@/lib/site";
-import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
+import { DeferredSmoothScroll } from "@/components/providers/DeferredSmoothScroll";
 import { Header } from "@/components/layout/Header";
 import { ThemeScript } from "@/components/layout/ThemeScript";
 import { SkipLink } from "@/components/layout/SkipLink";
@@ -28,6 +28,7 @@ const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   variable: "--font-cormorant",
   display: "swap",
+  preload: false,
 });
 
 export function generateStaticParams() {
@@ -123,12 +124,12 @@ export default async function LocaleLayout({
       <body className="font-display antialiased">
         <PersonJsonLd locale={locale} siteOrigin={siteOrigin} />
         <NextIntlClientProvider messages={messages}>
-          <SmoothScrollProvider>
+          <DeferredSmoothScroll>
             <SkipLink />
             <div className="grain" aria-hidden />
             <Header />
             <main id="main">{children}</main>
-          </SmoothScrollProvider>
+          </DeferredSmoothScroll>
         </NextIntlClientProvider>
       </body>
     </html>

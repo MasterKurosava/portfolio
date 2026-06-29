@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 
 interface HeroParticles2DProps {
-  scrollProgress: number;
+  scrollProgressRef: RefObject<number>;
 }
 
-export function HeroParticles2D({ scrollProgress }: HeroParticles2DProps) {
+export function HeroParticles2D({ scrollProgressRef }: HeroParticles2DProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -15,7 +15,7 @@ export function HeroParticles2D({ scrollProgress }: HeroParticles2DProps) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let animId: number;
+    let animId = 0;
     const nodes = Array.from({ length: 20 }, () => ({
       x: 0.5 + (Math.random() - 0.5) * 0.6,
       y: Math.random(),
@@ -23,18 +23,30 @@ export function HeroParticles2D({ scrollProgress }: HeroParticles2DProps) {
       vy: (Math.random() - 0.5) * 0.0004,
     }));
 
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+    const resize = (width: number, height: number) => {
+      canvas.width = width;
+      canvas.height = height;
     };
-    resize();
-    window.addEventListener("resize", resize);
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      const { width, height } = entry.contentRect;
+      if (width > 0 && height > 0) resize(width, height);
+    });
+    observer.observe(canvas);
 
     const draw = () => {
       const w = canvas.width;
       const h = canvas.height;
+      if (w === 0 || h === 0) {
+        animId = requestAnimationFrame(draw);
+        return;
+      }
+
       ctx.clearRect(0, 0, w, h);
 
+      const scrollProgress = scrollProgressRef.current ?? 0;
       const spread = 1 + scrollProgress * 0.8;
       const cx = w * 0.75;
       const cy = h * 0.5;
@@ -63,13 +75,14 @@ export function HeroParticles2D({ scrollProgress }: HeroParticles2DProps) {
 
       animId = requestAnimationFrame(draw);
     };
-    draw();
+
+    animId = requestAnimationFrame(draw);
 
     return () => {
       cancelAnimationFrame(animId);
-      window.removeEventListener("resize", resize);
+      observer.disconnect();
     };
-  }, [scrollProgress]);
+  }, [scrollProgressRef]);
 
   return <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" aria-hidden />;
 }

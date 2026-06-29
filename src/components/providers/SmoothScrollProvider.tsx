@@ -54,6 +54,13 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
 
       lenis.on("scroll", ScrollTrigger.update);
 
+      let viewport = {
+        top: 0,
+        left: 0,
+        width: window.innerWidth,
+        height: window.innerHeight,
+      };
+
       const raf = (time: number) => {
         lenis?.raf(time * 1000);
       };
@@ -68,12 +75,7 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
           return lenis!.scroll;
         },
         getBoundingClientRect() {
-          return {
-            top: 0,
-            left: 0,
-            width: window.innerWidth,
-            height: window.innerHeight,
-          };
+          return viewport;
         },
       });
 
@@ -84,6 +86,12 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
       restoreScrollPosition((y) => lenis!.scrollTo(y, { immediate: true }), refresh);
 
       const onResize = () => {
+        viewport = {
+          top: 0,
+          left: 0,
+          width: window.innerWidth,
+          height: window.innerHeight,
+        };
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(refresh, 200);
       };

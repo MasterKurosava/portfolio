@@ -4,20 +4,17 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useDeviceTier } from "@/hooks/useDeviceTier";
+import { useHeroScroll } from "@/hooks/useHeroScroll";
 import { HeroParticles2D } from "./HeroParticles2D";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { FocusTechLine } from "@/components/ui/tech-text";
 import { Phone, Send, MessageCircle } from "lucide-react";
 
-const HeroCore = dynamic(() => import("@/components/canvas/HeroCore").then((m) => m.HeroCore), {
-  ssr: false,
-  loading: () => null,
-});
-
-gsap.registerPlugin(ScrollTrigger);
+const HeroCore = dynamic(
+  () => import("@/components/canvas/HeroCore").then((m) => m.HeroCore),
+  { ssr: false, loading: () => null }
+);
 
 export function Hero() {
   const t = useTranslations("hero");
@@ -25,7 +22,7 @@ export function Hero() {
   const f = useTranslations("finale");
   const sectionRef = useRef<HTMLElement>(null);
   const heroMainRef = useRef<HTMLDivElement>(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const scrollProgressRef = useHeroScroll(sectionRef, heroMainRef);
   const [showCanvas, setShowCanvas] = useState(false);
   const tier = useDeviceTier();
   const bio = t.raw("bio") as string[];
@@ -36,29 +33,6 @@ export function Hero() {
     telegram: string;
     whatsapp: string;
   };
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    const heroMain = heroMainRef.current;
-    if (!section || !heroMain) return;
-
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: "top top",
-        end: "bottom top",
-        scrub: true,
-        onUpdate: (self) => setScrollProgress(self.progress),
-      },
-    });
-
-    tl.to(heroMain, { opacity: 0, y: -40, ease: "none" }, 0);
-
-    return () => {
-      tl.scrollTrigger?.kill();
-      tl.kill();
-    };
-  }, []);
 
   useEffect(() => {
     if (tier === "low") {
@@ -97,16 +71,16 @@ export function Hero() {
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -right-[20%] top-1/2 hidden h-[120%] w-[80%] -translate-y-1/2 scale-90 hero-canvas-wrap md:block">
           {tier === "low" ? (
-            <HeroParticles2D scrollProgress={scrollProgress} />
+            <HeroParticles2D scrollProgressRef={scrollProgressRef} />
           ) : showCanvas ? (
-            <HeroCore scrollProgress={scrollProgress} />
+            <HeroCore scrollProgressRef={scrollProgressRef} />
           ) : null}
         </div>
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/40" />
         <div className="absolute inset-x-0 top-0 bottom-24 bg-gradient-to-t from-transparent via-transparent to-background/60" />
       </div>
 
-      <div ref={heroMainRef} className="relative z-10 md:min-h-0 md:flex-1 md:overflow-y-auto">
+      <div ref={heroMainRef} className="relative z-10 will-change-[transform,opacity] md:min-h-0 md:flex-1 md:overflow-y-auto">
         <div className="mx-auto w-full max-w-6xl section-padding pb-4 pt-16 md:pb-4 md:pt-24">
           <div className="flex w-full flex-col gap-5 sm:grid sm:grid-cols-[130px_1fr] sm:items-start lg:grid-cols-[200px_1fr] lg:gap-12 xl:grid-cols-[220px_1fr]">
             <div className="mx-auto sm:mx-0">

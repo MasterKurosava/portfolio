@@ -1,12 +1,11 @@
 "use client";
 
-import { useRef, useMemo, useEffect } from "react";
+import { useRef, useMemo, useEffect, type RefObject } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Line } from "@react-three/drei";
 import * as THREE from "three";
 import { useReducedMotion } from "@/hooks/useDeviceTier";
 
-function NodeNetwork({ scrollProgress }: { scrollProgress: number }) {
+function NodeNetwork({ scrollProgressRef }: { scrollProgressRef: RefObject<number> }) {
   const groupRef = useRef<THREE.Group>(null);
   const mouse = useRef({ x: 0, y: 0 });
   const { camera } = useThree();
@@ -43,12 +42,14 @@ function NodeNetwork({ scrollProgress }: { scrollProgress: number }) {
       mouse.current.x = (e.clientX / window.innerWidth) * 2 - 1;
       mouse.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
     };
-    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mousemove", onMove, { passive: true });
     return () => window.removeEventListener("mousemove", onMove);
   }, []);
 
   useFrame((state) => {
+    const scrollProgress = scrollProgressRef.current ?? 0;
     const t = state.clock.elapsedTime;
+
     if (groupRef.current && !reducedMotion) {
       groupRef.current.rotation.y = THREE.MathUtils.lerp(
         groupRef.current.rotation.y,
@@ -72,6 +73,18 @@ function NodeNetwork({ scrollProgress }: { scrollProgress: number }) {
     camera.position.z = THREE.MathUtils.lerp(camera.position.z, 7 - scrollProgress * 2, 0.05);
   });
 
+  const lineMaterial = useMemo(
+    () => new THREE.LineBasicMaterial({ color: "#1a3a4a", transparent: true, opacity: 0.08 }),
+    []
+  );
+  const edgeLines = useMemo(
+    () => edges.map(([a, b]) => new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints([a, b]),
+      lineMaterial
+    )),
+    [edges, lineMaterial]
+  );
+
   return (
     <group ref={groupRef}>
       <mesh>
@@ -84,18 +97,18 @@ function NodeNetwork({ scrollProgress }: { scrollProgress: number }) {
           <meshBasicMaterial color="#1e4a5a" transparent opacity={0.35} />
         </mesh>
       ))}
-      {edges.map((edge, i) => (
-        <Line key={i} points={edge} color="#1a3a4a" transparent opacity={0.08} lineWidth={0.5} />
+      {edgeLines.map((line, i) => (
+        <primitive key={i} object={line} />
       ))}
     </group>
   );
 }
 
 interface HeroCoreProps {
-  scrollProgress?: number;
+  scrollProgressRef: RefObject<number>;
 }
 
-export function HeroCore({ scrollProgress = 0 }: HeroCoreProps) {
+export function HeroCore({ scrollProgressRef }: HeroCoreProps) {
   return (
     <Canvas
       camera={{ position: [0, 0, 7], fov: 45 }}
@@ -104,7 +117,7 @@ export function HeroCore({ scrollProgress = 0 }: HeroCoreProps) {
       style={{ position: "absolute", inset: 0 }}
     >
       <ambientLight intensity={0.15} />
-      <NodeNetwork scrollProgress={scrollProgress} />
+      <NodeNetwork scrollProgressRef={scrollProgressRef} />
     </Canvas>
   );
 }
