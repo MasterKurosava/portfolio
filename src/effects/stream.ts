@@ -310,7 +310,9 @@ export default effect(
     const dustMaterial = new SpriteNodeMaterial({ transparent: true, depthWrite: false, blending: AdditiveBlending });
     const dustScale = float(EYE).sub(dust.z).div(EYE);
     const span = view.y.mul(1.4);
-    const travel = scrollY.mul(0.35).div(dustScale);
+    // Dust drifts slower than the page on a big screen. On a phone it moves with the page: the
+    // browser scrolls a touch ahead of the frame, and only page-fixed content stays put meanwhile.
+    const travel = scrollY.mul(phone ? 1 : 0.35).div(dustScale);
     const dy = mod(dust.y.mul(span).add(travel), span).sub(span.mul(0.5));
     dustMaterial.positionNode = vec3(dust.x.mul(view.x.mul(1.3)).mul(dustScale), dy.mul(dustScale), dust.z);
     const dustStreak = smoothstep(0.1, 0.9, abs(u.velocity)).mul(14);
@@ -563,12 +565,21 @@ export default effect(
       const readY = scroll + input.height * (0.62 + 0.38 * smooth(maxScroll - input.height * 0.8, maxScroll, scroll));
       let k = 0;
       while (k < SAMPLES && path[k * 4 + 1] < readY) k++;
-      const target = still ? 1 : Math.min(k / (SAMPLES - 1), loopS);
-      headPx += (target * total - headPx) * (still ? 1 : 1 - Math.exp(-dt * 6));
-      const arrived = loopS < 1 && (still || headPx >= loopS * total - 3);
+      // A phone scrolls a touch ahead of the frame (on the compositor), and anything tied to the
+      // screen rather than the page would jump meanwhile: there the line is drawn whole, and the
+      // button lights up as it comes into view.
+      const whole = still || phone;
+      const target = whole ? 1 : Math.min(k / (SAMPLES - 1), loopS);
+      headPx += (target * total - headPx) * (whole ? 1 : 1 - Math.exp(-dt * 6));
+      let inView = false;
+      if (phone && endEl) {
+        const r = endEl.getBoundingClientRect();
+        inView = r.top < input.height * 0.88 && r.bottom > 0;
+      }
+      const arrived = loopS < 1 && (still || (phone ? inView : headPx >= loopS * total - 3));
       around = still ? (arrived ? 1 : 0) : Math.min(1, Math.max(0, around + (arrived ? dt / 1.1 : -dt / 0.45)));
       const eased = around * around * (3 - 2 * around);
-      const head = arrived ? loopS + eased * (1 - loopS) : Math.min(1, headPx / total);
+      const head = whole ? 1 : arrived ? loopS + eased * (1 - loopS) : Math.min(1, headPx / total);
       headS.value = head;
       const ignite = smooth(0.82, 1, around);
       lit.value = ignite;
@@ -593,7 +604,7 @@ export default effect(
       }
       // The head: a comet of hot particles behind the drawing point, gone once the button is lit.
       const comet = (phone ? 420 : 720) / total;
-      if (ignite < 1 && head > 0.002) {
+      if (!whole && ignite < 1 && head > 0.002) {
         move(local, scroll, halfW, halfH, {
           from: head - comet,
           to: head,
@@ -610,7 +621,7 @@ export default effect(
       // The head's own light.
       const tip = pointAt(head);
       headAt.value.set(tip.x - halfW, -(tip.y - scroll - halfH), 0);
-      headAmount.value = (1 - ignite) * smooth(0, 0.01, head) * 0.55;
+      headAmount.value = whole ? 0 : (1 - ignite) * smooth(0, 0.01, head) * 0.55;
 
       // The lit button: particles circling its rim, a soft light under it, faster under the pointer.
       if (endEl && loopS < 1 && ignite > 0) {

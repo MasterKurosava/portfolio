@@ -411,6 +411,15 @@ export default effect(
     measure();
     onDispose(() => observer.disconnect());
 
+    // The city is drawn in screen space. While the browser scrolls ahead of the frame (touch,
+    // keyboard, the scrollbar) the canvas would move with the page and the skyline jump back at
+    // the next frame; while the box is on screen the canvas holds still instead.
+    const release = app.stage.hold(() => {
+      const r = host.getBoundingClientRect();
+      return r.bottom > 0 && r.top < window.innerHeight;
+    });
+    onDispose(release);
+
     let shown = 0;
     let lean = 0;
     return (input) => {

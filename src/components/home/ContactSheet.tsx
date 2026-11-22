@@ -10,36 +10,36 @@ export function ContactSheet({ content: c }: { content: Content }) {
   return (
     <Sheet id="contact" no={5} title={k.title} intro={k.intro} content={c}>
       <div className="grid gap-10 md:grid-cols-12 md:gap-x-12">
-        <div className="figure-field grid content-start gap-6 md:col-span-6 md:col-start-7 md:row-start-1 md:pl-6">
+        {/* Phones: the number, the call button across the screen, then Telegram and the CV side by side. */}
+        <div className="figure-field grid content-start gap-6 max-md:gap-5 md:col-span-6 md:col-start-7 md:row-start-1 md:pl-6">
           <a
             href={SITE.phoneHref}
-            data-dio="scramble"
-            data-dio-chars="digits"
-            data-dio-duration="1.1"
             className="num block whitespace-nowrap text-[clamp(1.85rem,7.6vw,3.75rem)] font-[800] leading-none tracking-[-0.035em] text-spot no-underline hover:text-ink"
           >
             {SITE.phone}
           </a>
-          <div className="grid justify-items-start gap-3">
+          <div className="grid justify-items-start gap-3 max-md:justify-items-stretch max-md:gap-2.5">
             {/* Alone on its row: the line of light comes in from the right, runs once around it
                 and stays there, circling. */}
             <a className="btn btn-primary btn-end" href={SITE.phoneHref} data-stream data-stream-end data-stream-width="4">
               <Phone aria-hidden />
               {c.ui.actions.call}
             </a>
-            <div className="flex flex-wrap gap-3">
-              <a className="btn" href={SITE.telegramHref} target="_blank" rel="noopener">
+            <div className="flex flex-wrap gap-3 max-md:grid max-md:grid-cols-2 max-md:gap-2.5">
+              <a className="btn btn-tight" href={SITE.telegramHref} target="_blank" rel="noopener">
                 <Send aria-hidden />
-                {c.ui.actions.telegram}
+                <span className="max-md:hidden">{c.ui.actions.telegram}</span>
+                <span className="md:hidden">Telegram</span>
               </a>
-              <a className="btn" href={cv} download>
+              <a className="btn btn-tight" href={cv} download>
                 <FileDown aria-hidden />
                 {c.ui.actions.cv}
               </a>
             </div>
           </div>
         </div>
-        <table className="spec md:col-span-6 md:col-start-1 md:row-start-1">
+        {/* spec-grid keeps it two columns on the narrowest phones (globals.css). */}
+        <table className="spec spec-grid contact-spec md:col-span-6 md:col-start-1 md:row-start-1">
           <tbody>
             <tr>
               <th scope="row">{k.rows.telegram}</th>

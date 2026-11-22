@@ -8,6 +8,7 @@ import { QuoteBlock } from "./QuoteBlock";
 import { PriceBoard } from "./PriceBoard";
 import { CityBackdrop, CityStage } from "./CityStage";
 import { VotonChain } from "./VotonChain";
+import { SwipeList } from "./SwipeList";
 import { plain, rich } from "@/components/case/rich";
 
 type Theme = "whitewill" | "voton" | "teknolab";
@@ -45,10 +46,10 @@ const HEAD_EFFECT: Record<Theme, Record<string, string>> = {
 /** A company heading. Dates, role and city are in the table above, so the heading stands alone. */
 function CompanyHead({ id, title, theme }: { id: string; title: string; theme: Theme }) {
   return (
-    <header className="border-t border-[var(--hair)] pt-8">
+    <header className="border-t border-[var(--hair)] pt-8 max-md:pt-6">
       <h3
         id={`${id}-title`}
-        className="m-0 max-w-[24ch] text-[clamp(2rem,4.6vw,3.5rem)] font-[780] leading-[1.02] tracking-[-0.035em] text-balance"
+        className="m-0 max-w-[24ch] text-[clamp(2rem,4.6vw,3.5rem)] font-[780] leading-[1.02] tracking-[-0.035em] text-balance max-md:text-[1.75rem] max-md:leading-[1.05]"
         {...HEAD_EFFECT[theme]}
       >
         {plain(title)}
@@ -72,22 +73,27 @@ export function WorkSheet({ content: c }: { content: Content }) {
       <article
         id="whitewill"
         aria-labelledby="whitewill-title"
-        className="theme-whitewill city-world mt-20 grid scroll-mt-20 gap-12 md:mt-32 md:gap-16"
+        className="theme-whitewill city-world mt-20 grid scroll-mt-20 gap-12 max-md:mt-14 max-md:gap-7 md:mt-32 md:gap-16"
       >
         <CompanyHead id="whitewill" title={ww.title} theme="whitewill" />
-        <div className="grid gap-12 md:grid-cols-12 md:gap-x-12">
-          <div className="grid content-start gap-8 md:col-span-7" data-city-part="text">
-            <p className="m-0 max-w-[62ch] text-[clamp(1.0625rem,1.4vw,1.25rem)] leading-[1.55]">{rich(ww.context)}</p>
-            <ul className="m-0 grid list-none p-0">
+        <div className="grid gap-12 max-md:gap-8 md:grid-cols-12 md:gap-x-12">
+          <div className="grid content-start gap-8 max-md:gap-5 md:col-span-7" data-city-part="text">
+            <p className="m-0 max-w-[62ch] text-[clamp(1.0625rem,1.4vw,1.25rem)] leading-[1.55] max-md:text-[1rem]">{rich(ww.context)}</p>
+            {/* Phones: the six points are a row of cards to swipe through (.swipe-row). */}
+            <SwipeList count={ww.points.length} labelledBy="whitewill-title" className="m-0 grid list-none p-0">
               {ww.points.map((point) => (
                 <li key={point.title} className="grid gap-1 border-t border-[var(--hair)] py-4 last:border-b">
                   <h4 className="m-0 text-[1.125rem] font-[680] leading-snug tracking-[-0.01em]">{rich(point.title)}</h4>
                   <p className="m-0 text-ink-soft">{rich(point.text)}</p>
                 </li>
               ))}
-            </ul>
+            </SwipeList>
           </div>
-          <figure className="m-0 md:col-span-5 md:self-center" data-stream="edge">
+          {/* Phones: a smaller globe with its seven markets listed beside it. */}
+          <figure
+            className="m-0 max-md:grid max-md:grid-cols-[minmax(0,1fr)_auto] max-md:items-center max-md:gap-x-5 md:col-span-5 md:self-center"
+            data-stream="edge"
+          >
             <div
               className="aspect-square w-full"
               data-dio="globe"
@@ -106,7 +112,11 @@ export function WorkSheet({ content: c }: { content: Content }) {
               data-city-part="moon"
               aria-hidden
             />
-            <ul id="markets" className="m-0 mt-4 flex list-none flex-wrap gap-x-5 gap-y-2 p-0 text-[0.9375rem]" data-city-part="label">
+            <ul
+              id="markets"
+              className="m-0 mt-4 flex list-none flex-wrap gap-x-5 gap-y-2 p-0 text-[0.9375rem] max-md:mt-0 max-md:flex-col max-md:flex-nowrap max-md:gap-y-1.5"
+              data-city-part="label"
+            >
               {MARKETS.map((m, i) => (
                 <li
                   key={m.id}
@@ -121,7 +131,9 @@ export function WorkSheet({ content: c }: { content: Content }) {
                 </li>
               ))}
             </ul>
-            <figcaption className="caption" data-city-part="label">{p.sync.figure}</figcaption>
+            <figcaption className="caption max-md:col-span-2 max-md:mt-3" data-city-part="label">
+              {p.sync.figure}
+            </figcaption>
           </figure>
         </div>
 
@@ -135,7 +147,7 @@ export function WorkSheet({ content: c }: { content: Content }) {
         <CityStage value={p.sync.key} label={p.sync.keyLabel} text={p.sync.cityCaption} alt={p.sync.cityAlt} />
 
         <p className="m-0" data-city-part="quote">
-          <Link href="/work/whitewill" className="btn">
+          <Link href="/work/whitewill" className="btn btn-tight">
             {ww.link}
             <ArrowRight aria-hidden />
           </Link>
@@ -147,20 +159,20 @@ export function WorkSheet({ content: c }: { content: Content }) {
       </article>
 
       {/* VOTON: Web3. A cool violet light, the heading decodes out of hashes. */}
-      <article id="voton" aria-labelledby="voton-title" className="theme-voton mt-24 grid scroll-mt-20 gap-12 md:mt-36">
+      <article id="voton" aria-labelledby="voton-title" className="theme-voton mt-24 grid scroll-mt-20 gap-12 max-md:mt-16 max-md:gap-6 md:mt-36">
         <CompanyHead id="voton" title={w.voton.title} theme="voton" />
         {/* A live chain: data arrives over the wire, a block forms and locks in, the chain moves on. */}
         <VotonChain />
-        <div className="grid gap-10 md:grid-cols-12 md:gap-x-12">
-          <div className="grid content-start gap-4 md:col-span-6">
+        <div className="grid gap-10 max-md:gap-6 md:grid-cols-12 md:gap-x-12">
+          <div className="grid content-start gap-4 max-md:gap-3 md:col-span-6">
             {w.voton.text.map((t, i) => (
               <p key={i} className="m-0 text-ink-soft first:text-ink">
                 {rich(t)}
               </p>
             ))}
           </div>
-          <div className="grid content-start gap-6 md:col-span-6" data-stream="edge">
-            <dl className="m-0 grid grid-cols-2 gap-6 border-y border-[var(--hair)] py-6">
+          <div className="grid content-start gap-6 max-md:gap-3 md:col-span-6" data-stream="edge">
+            <dl className="m-0 grid grid-cols-2 gap-6 border-y border-[var(--hair)] py-6 max-md:py-4">
               <div>
                 <dt className="text-ink-soft">{w.voton.years.fromLabel}</dt>
                 <dd className="key-number m-0 mt-3" data-dio="scramble" data-dio-chars="digits" data-dio-duration="0.9">
@@ -175,7 +187,7 @@ export function WorkSheet({ content: c }: { content: Content }) {
               </div>
             </dl>
             <p className="m-0">
-              <a href="#projects" className="link inline-flex items-center gap-2 font-medium">
+              <a href="#projects" className="link inline-flex items-center gap-2 font-medium max-md:min-h-11">
                 {w.voton.link}
                 <ArrowRight aria-hidden className="h-[1em] w-[1em]" />
               </a>
@@ -188,10 +200,10 @@ export function WorkSheet({ content: c }: { content: Content }) {
       </article>
 
       {/* Teknolab: a marketplace price war. Price-tag red and a flip board. */}
-      <article id="teknolab" aria-labelledby="teknolab-title" className="theme-teknolab mt-24 grid scroll-mt-20 gap-12 md:mt-36">
+      <article id="teknolab" aria-labelledby="teknolab-title" className="theme-teknolab mt-24 grid scroll-mt-20 gap-12 max-md:mt-16 max-md:gap-6 md:mt-36">
         <CompanyHead id="teknolab" title={w.teknolab.title} theme="teknolab" />
-        <div className="grid gap-10 md:grid-cols-12 md:gap-x-12">
-          <div className="grid content-start gap-4 md:col-span-5">
+        <div className="grid gap-10 max-md:gap-6 md:grid-cols-12 md:gap-x-12">
+          <div className="grid content-start gap-4 max-md:gap-3 md:col-span-5">
             {w.teknolab.text.map((t, i) => (
               <p key={i} className="m-0 text-ink-soft first:text-ink">
                 {rich(t)}

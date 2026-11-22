@@ -19,9 +19,9 @@ export function ProjectsSheet({ content: c }: { content: Content }) {
   return (
     <Sheet id="projects" no={4} title={p.title} intro={p.intro} content={c}>
       <i aria-hidden data-stream="edge" className="block h-px w-px" />
-      <article aria-labelledby="diorama-title" className="grid gap-10">
-        <div className="grid gap-10 md:grid-cols-12 md:gap-x-12">
-          <div className="grid content-start gap-5 md:col-span-5">
+      <article aria-labelledby="diorama-title" className="grid gap-10 max-md:gap-6">
+        <div className="grid gap-10 max-md:gap-6 md:grid-cols-12 md:gap-x-12">
+          <div className="grid content-start gap-5 max-md:gap-4 md:col-span-5">
             <h3
               id="diorama-title"
               className="m-0 text-[clamp(2.5rem,5.4vw,4rem)] font-[800] leading-none tracking-[-0.04em]"
@@ -33,13 +33,13 @@ export function ProjectsSheet({ content: c }: { content: Content }) {
                 {rich(t)}
               </p>
             ))}
-            <dl className="m-0 grid grid-cols-3 gap-4 border-y border-[var(--hair)] py-5">
+            <dl className="m-0 grid grid-cols-3 gap-4 border-y border-[var(--hair)] py-5 max-md:py-4">
               {d.numbers.map((n) => (
                 <div key={n.label}>
                   <dd className="m-0 text-[clamp(2rem,4.6vw,3.25rem)] font-[800] leading-none tracking-[-0.04em]">
                     {n.value}
                   </dd>
-                  <dt className="mt-2 text-[0.875rem] leading-snug text-ink-soft">{n.label}</dt>
+                  <dt className="mt-2 text-[0.875rem] leading-snug text-ink-soft max-md:text-[0.9375rem]">{n.label}</dt>
                 </div>
               ))}
             </dl>
@@ -50,7 +50,7 @@ export function ProjectsSheet({ content: c }: { content: Content }) {
             </p>
           </div>
           <figure className="m-0 md:col-span-7">
-            <div className="figure-field p-2 md:p-4" data-stream="edge">
+            <div className="figure-field p-2 max-md:px-0 md:p-4" data-stream="edge">
               <video
                 className="aspect-[16/10] w-full"
                 width={1120}
@@ -80,11 +80,11 @@ export function ProjectsSheet({ content: c }: { content: Content }) {
 
       </article>
 
-      <article aria-labelledby="intouch-title" className="mt-20 grid gap-10 md:mt-28 md:grid-cols-12 md:gap-x-12">
-        <div className="grid content-start gap-5 md:col-span-5">
+      <article aria-labelledby="intouch-title" className="mt-20 grid gap-10 max-md:mt-12 max-md:gap-6 md:mt-28 md:grid-cols-12 md:gap-x-12">
+        <div className="grid content-start gap-5 max-md:gap-4 md:col-span-5">
           <h3
             id="intouch-title"
-            className="m-0 text-[clamp(2rem,4.4vw,3.25rem)] font-[780] leading-none tracking-[-0.035em]"
+            className="m-0 text-[clamp(2rem,4.4vw,3.25rem)] font-[780] leading-none tracking-[-0.035em] max-md:text-[1.75rem]"
           >
             {p.intouch.title}
           </h3>
@@ -94,7 +94,7 @@ export function ProjectsSheet({ content: c }: { content: Content }) {
           </p>
         </div>
         <figure className="m-0 md:col-span-7">
-          <div className="figure-field grid grid-cols-[1fr_auto] items-end gap-4 p-2 md:gap-8 md:p-4" data-stream="edge">
+          <div className="figure-field grid grid-cols-[1fr_auto] items-end gap-4 p-2 max-md:px-0 md:gap-8 md:p-4" data-stream="edge">
             {/* The live landing on a laptop and a phone, captured at 2× and 3×. */}
             <img
               src="/media/intouch-desktop.webp"
@@ -116,7 +116,7 @@ export function ProjectsSheet({ content: c }: { content: Content }) {
               width={900}
               height={1948}
               loading="lazy"
-              className="relative aspect-[900/1948] w-[24vw] max-w-[170px] md:-ml-16 md:w-[11vw]"
+              className="relative aspect-[900/1948] w-[24vw] max-w-[170px] max-md:w-[21vw] md:-ml-16 md:w-[11vw]"
               data-dio="device"
               data-dio-frame="phone"
               data-dio-color="#3a3835"
