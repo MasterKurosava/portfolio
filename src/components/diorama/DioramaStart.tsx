@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Lenis from "lenis";
 import { start } from "@dioramajs/diorama";
+import { prepareAhead, warmPipelines } from "@/lib/diorama-prepare";
 
 /** Starts the one Diorama app of the site after hydration. */
 export function DioramaStart() {
@@ -32,6 +33,19 @@ export function DioramaStart() {
       // at about 1×: everything drawn on the canvas goes soft. 9 million covers 4K at 200%.
       render: { maxPixels: 9_000_000 },
     });
+    // Effects further down get ready ahead, in idle time while the page is not being scrolled, and
+    // their shaders compile before their first frame: otherwise a section stalls the scroll for up
+    // to half a second as it comes into view (more on a phone). After the first screen has
+    // arrived, so the name's assembly is not disturbed.
+    const loaded = new Promise<void>((resolve) => {
+      if (document.readyState === "complete") resolve();
+      else window.addEventListener("load", () => resolve(), { once: true });
+    });
+    prepareAhead(
+      app,
+      loaded.then(() => new Promise((resolve) => setTimeout(resolve, 2200))),
+      warmPipelines(app),
+    );
     return () => void app;
   }, []);
   return null;

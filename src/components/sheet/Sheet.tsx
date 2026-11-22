@@ -38,6 +38,7 @@ export function Sheet({
           id={headingId}
           className="sheet-title"
           data-dio="assemble"
+          data-dio-phone="off"
           data-dio-style="dashes"
           data-dio-from="edges"
           data-dio-color="var(--ink)"

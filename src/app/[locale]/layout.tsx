@@ -10,6 +10,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ActionBar } from "@/components/layout/ActionBar";
 import { DioramaStart } from "@/components/diorama/DioramaStart";
+import { PhoneEffects } from "@/components/diorama/PhoneEffects";
 import { Designations } from "@/components/diorama/Designations";
 import { PersonJsonLd } from "@/components/seo/PersonJsonLd";
 import "../globals.css";
@@ -110,6 +111,7 @@ export default async function LocaleLayout({
           <ActionBar content={c} />
           <Designations />
           <div className="stream-field" data-dio="stream" data-dio-front="true" data-dio-load="eager" aria-hidden />
+          <PhoneEffects />
           <DioramaStart />
         </NextIntlClientProvider>
       </body>

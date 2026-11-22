@@ -20,6 +20,7 @@ type Theme = "whitewill" | "voton" | "teknolab";
 const HEAD_EFFECT: Record<Theme, Record<string, string>> = {
   whitewill: {
     "data-dio": "text-reveal",
+    "data-dio-phone": "off",
     "data-dio-by": "word",
     "data-dio-motion": "rise",
     "data-dio-stagger": "0.06",
@@ -27,6 +28,7 @@ const HEAD_EFFECT: Record<Theme, Record<string, string>> = {
   },
   voton: {
     "data-dio": "scramble",
+    "data-dio-phone": "off",
     "data-dio-motion": "decode",
     "data-dio-chars": "hex",
     "data-dio-trigger": "view",
@@ -35,6 +37,7 @@ const HEAD_EFFECT: Record<Theme, Record<string, string>> = {
   },
   teknolab: {
     "data-dio": "split-flap",
+    "data-dio-phone": "off",
     "data-dio-style": "plain",
     "data-dio-motion": "random",
     "data-dio-trigger": "view",
@@ -175,13 +178,13 @@ export function WorkSheet({ content: c }: { content: Content }) {
             <dl className="m-0 grid grid-cols-2 gap-6 border-y border-[var(--hair)] py-6 max-md:py-4">
               <div>
                 <dt className="text-ink-soft">{w.voton.years.fromLabel}</dt>
-                <dd className="key-number m-0 mt-3" data-dio="scramble" data-dio-chars="digits" data-dio-duration="0.9">
+                <dd className="key-number m-0 mt-3" data-dio="scramble" data-dio-phone="off" data-dio-chars="digits" data-dio-duration="0.9">
                   {w.voton.years.from}
                 </dd>
               </div>
               <div>
                 <dt className="text-ink-soft">{w.voton.years.toLabel}</dt>
-                <dd className="key-number m-0 mt-3 text-spot" data-dio="scramble" data-dio-chars="digits" data-dio-duration="1.2" data-dio-delay="0.35">
+                <dd className="key-number m-0 mt-3 text-spot" data-dio="scramble" data-dio-phone="off" data-dio-chars="digits" data-dio-duration="1.2" data-dio-delay="0.35">
                   {w.voton.years.to}
                 </dd>
               </div>

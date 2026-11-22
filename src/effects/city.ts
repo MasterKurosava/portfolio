@@ -411,14 +411,6 @@ export default effect(
     measure();
     onDispose(() => observer.disconnect());
 
-    // The city is drawn in screen space. While the browser scrolls ahead of the frame (touch,
-    // keyboard, the scrollbar) the canvas would move with the page and the skyline jump back at
-    // the next frame; while the box is on screen the canvas holds still instead.
-    const release = app.stage.hold(() => {
-      const r = host.getBoundingClientRect();
-      return r.bottom > 0 && r.top < window.innerHeight;
-    });
-    onDispose(release);
 
     let shown = 0;
     let lean = 0;
@@ -458,6 +450,10 @@ export default effect(
       // How far the top of the screen is into the box, and where the peak is.
       const s = -input.y;
       const reduced = input.reducedMotion;
+      // On a phone the browser scrolls a touch ahead of the frame, and the canvas follows the page
+      // meanwhile: a city held to the screen would shake. There it stands under the peak and
+      // scrolls with the page, as under reduced motion; only its windows follow the scroll.
+      const pinned = reduced || width < 768;
       const peakTop = parts.peak?.[0] ?? boxH * 0.5;
       const peakEnd = parts.peak?.[1] ?? boxH * 0.8;
       // The camera comes down out of the night as the heading comes up and holds a distant
@@ -467,16 +463,16 @@ export default effect(
       const descend = smooth((s - (peakTop - height * 1.05)) / (height * 0.95));
       const lift = smooth((s - (peakEnd - height * 0.95)) / (height * 0.9));
       const camera = Math.max(1 - rise * (1 - READING * (1 - descend)), lift);
-      cam.value = reduced ? 0 : camera;
+      cam.value = pinned ? 0 : camera;
       // The windows: a few on the far skyline while the list reads, all of them for the peak.
       light.value = reduced ? 1 : Math.max(0.4 * rise, smooth((s - (peakTop - height * 0.95)) / (height * 1.05)));
-      water.value = (reduced ? 1 : 1 - Math.min(1, camera / 0.35)) * height * (width < 768 ? 0.15 : 0.1);
+      water.value = (pinned ? 1 : 1 - Math.min(1, camera / 0.35)) * height * (width < 768 ? 0.15 : 0.1);
       // Under reduced motion the city stands under the peak and scrolls with the page.
-      street.value = reduced ? up(peakEnd) : 0;
+      street.value = pinned ? up(peakEnd) : 0;
       const px = Number.isFinite(input.pointer.x) ? input.pointer.x : 0.5;
       const target = reduced ? 0 : Math.max(-0.6, Math.min(0.6, px - 0.5));
       lean += (target - lean) * Math.min(1, (input.delta || 0.016) * 3);
-      pan.value = reduced ? 0 : -(s / height) * 30 - lean * 30;
+      pan.value = pinned ? 0 : -(s / height) * 30 - lean * 30;
       if (shown < 1) {
         shown = reduced ? 1 : Math.min(1, shown + (input.delta || 0.016) / 0.9);
         reveal.value = shown * shown * (3 - 2 * shown);

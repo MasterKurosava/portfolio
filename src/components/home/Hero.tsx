@@ -105,6 +105,7 @@ export function Hero({ content: c }: { content: Content }) {
               <dd
                 className="m-0 whitespace-nowrap text-[clamp(2.5rem,10vw,3.5rem)] font-[800] leading-none tracking-[-0.045em] md:text-[clamp(2.25rem,4.2vw,3.5rem)]"
                 data-dio="scramble"
+                data-dio-phone="off"
                 data-dio-chars="digits"
                 data-dio-duration="1"
                 data-dio-delay={String(0.4 + i * 0.12)}
@@ -122,6 +123,7 @@ export function Hero({ content: c }: { content: Content }) {
         <h2
           className="m-0 text-[clamp(1.75rem,3.2vw,2.5rem)] font-[760] leading-tight tracking-[-0.03em] md:col-span-3"
           data-dio="text-reveal"
+          data-dio-phone="off"
           data-dio-by="word"
           data-dio-motion="rise"
         >
