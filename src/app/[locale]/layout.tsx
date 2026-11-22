@@ -56,7 +56,15 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       follow: true,
       googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
     },
-    icons: { icon: "/images/icon.ico" },
+    // "MK" in the site's face: M in ink, K in the amber light, on the stage.
+    icons: {
+      icon: [
+        { url: "/icon.svg", type: "image/svg+xml" },
+        { url: "/favicon.ico", sizes: "16x16 32x32 48x48" },
+      ],
+      apple: "/apple-touch-icon.png",
+    },
+    manifest: "/manifest.webmanifest",
     openGraph: {
       type: "profile",
       firstName: locale === "en" ? "Mikhail" : "Михаил",
