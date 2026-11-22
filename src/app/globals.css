@@ -1,62 +1,35 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
-
+/* Dark stage: theatre black with a warm cast, off-white type, one amber stage light. */
 :root {
-  --theme-background: #f7f8fc;
-  --theme-foreground: #0c0c14;
-  --theme-muted: #5c5c70;
-  --theme-accent: #0088a8;
-  --theme-accent-secondary: #6d28d9;
-  --theme-surface: #eceef4;
-  --theme-border: rgba(12, 12, 20, 0.1);
-  --theme-elevated: rgba(12, 12, 20, 0.045);
-  --theme-elevated-strong: rgba(12, 12, 20, 0.08);
-  --theme-shadow: rgba(12, 12, 20, 0.1);
-  --theme-shadow-strong: rgba(12, 12, 20, 0.18);
-  --theme-inset-highlight: rgba(255, 255, 255, 0.85);
-  --theme-muted-fg: rgba(12, 12, 20, 0.4);
-  --theme-hero-filter: blur(3px) saturate(0.45) brightness(1.05);
-  --theme-grain-opacity: 0.022;
-  --theme-selection-bg: rgba(0, 136, 168, 0.22);
-  --theme-selection-fg: #0c0c14;
-  --theme-card-inner: rgba(0, 0, 0, 0.04);
-}
-
-.dark {
-  --theme-background: #050508;
-  --theme-foreground: #f0f0f5;
-  --theme-muted: #8a8a9a;
-  --theme-accent: #00d4ff;
-  --theme-accent-secondary: #7c3aed;
-  --theme-surface: #0c0c14;
-  --theme-border: rgba(255, 255, 255, 0.08);
-  --theme-elevated: rgba(255, 255, 255, 0.05);
-  --theme-elevated-strong: rgba(255, 255, 255, 0.09);
-  --theme-shadow: rgba(0, 0, 0, 0.28);
-  --theme-shadow-strong: rgba(0, 0, 0, 0.45);
-  --theme-inset-highlight: rgba(255, 255, 255, 0.08);
-  --theme-muted-fg: rgba(255, 255, 255, 0.35);
-  --theme-hero-filter: blur(3px) saturate(0.3) brightness(0.5);
-  --theme-grain-opacity: 0.04;
-  --theme-selection-bg: rgba(0, 212, 255, 0.3);
-  --theme-selection-fg: #fff;
-  --theme-card-inner: rgba(255, 255, 255, 0.04);
+  --paper: oklch(0.165 0.006 70);
+  --paper-deep: oklch(0.205 0.007 70);
+  --paper-raised: oklch(0.235 0.008 70);
+  --ink: oklch(0.955 0.008 85);
+  --ink-soft: oklch(0.82 0.01 80);
+  --ink-mute: oklch(0.67 0.012 80);
+  --hair: color-mix(in oklch, var(--ink) 11%, transparent);
+  --rule: color-mix(in oklch, var(--ink) 22%, transparent);
+  --spot: oklch(0.82 0.135 72);
+  --spot-strong: oklch(0.86 0.14 76);
+  --spot-ink: oklch(0.21 0.03 60);
+  --glow: color-mix(in oklch, var(--spot) 16%, transparent);
+  --page-max: 1280px;
+  --gutter: clamp(20px, 5vw, 64px);
+  color-scheme: dark;
 }
 
 @theme inline {
-  --color-background: var(--theme-background);
-  --color-foreground: var(--theme-foreground);
-  --color-muted: var(--theme-muted);
-  --color-accent: var(--theme-accent);
-  --color-accent-secondary: var(--theme-accent-secondary);
-  --color-surface: var(--theme-surface);
-  --color-border: var(--theme-border);
-  --color-elevated: var(--theme-elevated);
-  --color-elevated-strong: var(--theme-elevated-strong);
-  --font-display: var(--font-syne);
-  --font-mono: var(--font-jetbrains);
-  --font-serif: var(--font-cormorant);
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-mute: var(--ink-mute);
+  --color-spot: var(--spot);
+  --color-spot-ink: var(--spot-ink);
+  --color-hair: var(--hair);
+  --font-sans: var(--font-geologica), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 }
 
 * {
@@ -64,106 +37,784 @@
 }
 
 html {
-  scroll-behavior: auto;
-  color-scheme: dark;
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: 76px;
+  scrollbar-color: color-mix(in oklch, var(--ink) 30%, transparent) var(--paper);
 }
 
-html:not(.dark) {
-  color-scheme: light;
-}
-
-html.dark {
-  color-scheme: dark;
-}
-
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: hidden;
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
-  background: var(--color-background);
-  color: var(--color-foreground);
-  font-family: var(--font-display), system-ui, sans-serif;
-  overflow-x: hidden;
+  margin: 0;
+  min-height: 100svh;
+  font-family: var(--font-geologica), system-ui, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.62;
+  /* Transparent: the Diorama canvas draws under the page; html carries the colour without it. */
+  background: transparent;
+  color: var(--ink);
+  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 ::selection {
-  background: var(--theme-selection-bg);
-  color: var(--theme-selection-fg);
+  background: var(--spot);
+  color: var(--spot-ink);
 }
 
-.grain {
-  pointer-events: none;
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  opacity: var(--theme-grain-opacity);
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+:focus-visible {
+  outline: 2px solid var(--spot);
+  outline-offset: 3px;
 }
 
-.hero-canvas-wrap {
-  filter: var(--theme-hero-filter);
+@layer base {
+  a {
+    color: inherit;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+  }
+
+  img,
+  video {
+    display: block;
+    max-width: 100%;
+  }
 }
 
-.section-padding {
-  @apply px-4 sm:px-6 md:px-12 lg:px-20;
+.num {
+  font-variant-numeric: tabular-nums;
 }
 
-.text-gradient {
-  background: linear-gradient(135deg, var(--theme-accent) 0%, var(--theme-accent-secondary) 50%, var(--theme-foreground) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* Kept for compatibility: plain text now. */
+.draft {
+  font-style: normal;
 }
 
-.expertise-card {
-  background: linear-gradient(
-    135deg,
-    var(--theme-elevated-strong) 0%,
-    var(--theme-elevated) 40%,
-    transparent 100%
-  );
-  box-shadow:
-    0 4px 24px var(--theme-shadow),
-    inset 0 1px 0 var(--theme-inset-highlight);
+/* A scene: one section of the page. */
+.sheet {
+  position: relative;
+  margin-inline: auto;
+  max-width: calc(var(--page-max) + 2 * var(--gutter));
+  padding: clamp(72px, 11vw, 152px) var(--gutter) 0;
 }
 
-.expertise-card.is-active {
-  box-shadow:
-    0 12px 40px var(--theme-shadow-strong),
-    inset 0 1px 0 var(--theme-inset-highlight);
+.sheet-head {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: clamp(36px, 5vw, 72px);
 }
 
-.scrollbar-none {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+.sheet-title {
+  margin: 0;
+  font-size: clamp(2.25rem, 6vw, 4.5rem);
+  line-height: 1;
+  font-weight: 780;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
 }
 
-.scrollbar-none::-webkit-scrollbar {
+.sheet-no {
   display: none;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+.sheet-intro {
+  margin: 0;
+  max-width: 58ch;
+  color: var(--ink-soft);
+  font-size: clamp(1.0625rem, 1.5vw, 1.3125rem);
+  line-height: 1.55;
+}
+
+.title-block {
+  display: none;
+}
+
+/* Fact tables. */
+.spec {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+}
+
+.spec caption {
+  text-align: left;
+  caption-side: top;
+  padding-bottom: 0.9rem;
+  font-weight: 650;
+  font-size: 1.125rem;
+}
+
+.spec th,
+.spec td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.8rem 1rem 0.8rem 0;
+  border-top: 1px solid var(--hair);
+}
+
+.spec tr:last-child > * {
+  border-bottom: 1px solid var(--hair);
+}
+
+.spec thead th {
+  width: auto;
+  font-size: 0.875rem;
+}
+
+.spec th {
+  width: 32%;
+  font-weight: 400;
+  color: var(--ink-mute);
+}
+
+.spec td {
+  font-weight: 450;
+  color: var(--ink);
+}
+
+@media (max-width: 520px) {
+  .spec:not(.spec-grid) th,
+  .spec:not(.spec-grid) td {
+    display: block;
+    width: auto;
+    padding-right: 0;
   }
+
+  .spec:not(.spec-grid) th {
+    padding-bottom: 0;
+    font-size: 0.875rem;
+  }
+
+  .spec:not(.spec-grid) td {
+    border-top: 0;
+    padding-top: 0.2rem;
+  }
+
+  .spec:not(.spec-grid) tr:last-child th {
+    border-bottom: 0;
+  }
+}
+
+.pos {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 1.9em;
+  height: 1.9em;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--ink-soft);
+}
+
+.caption {
+  margin-top: 0.9rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--ink-mute);
+}
+
+.caption b {
+  display: none;
+}
+
+/* Buttons: pills; the primary carries the stage light. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 48px;
+  padding: 0.7rem 1.3rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 560;
+  font-size: 1rem;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn:hover {
+  background: var(--paper-raised);
+  border-color: color-mix(in oklch, var(--ink) 40%, transparent);
+}
+
+.btn-primary {
+  background: var(--spot);
+  border-color: var(--spot);
+  color: var(--spot-ink);
+  font-weight: 650;
+}
+
+.btn-primary:hover {
+  background: var(--spot-strong);
+  border-color: var(--spot-strong);
+  color: var(--spot-ink);
+}
+
+.btn svg {
+  width: 1.1em;
+  height: 1.1em;
+  flex: none;
+}
+
+/* The button the line of light ends on: it warms up once the line has run around it. */
+.btn-end {
+  transition:
+    box-shadow 0.9s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.btn-end[data-lit="true"] {
+  box-shadow:
+    0 0 0 1px color-mix(in oklch, var(--spot-strong) 70%, white),
+    0 0 28px -4px color-mix(in oklch, var(--spot) 70%, transparent);
+}
+
+@media (hover: hover) {
+  .btn-end[data-lit="true"]:hover {
+    transform: translateY(-1px);
+  }
+}
+
+.link {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklch, var(--ink) 35%, transparent);
+}
+
+.link:hover {
+  color: var(--spot);
+  text-decoration-color: currentColor;
+}
+
+/* A stage for a visual: a dark panel lit from above. */
+/* No fill and no frame: the canvas under the page draws the visual through it, in the open. */
+.figure-field {
+  position: relative;
+}
+
+.stream-field {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.quote {
+  margin: 0;
+  display: grid;
+  gap: 1.1rem;
+}
+
+.quote blockquote {
+  margin: 0;
+  font-size: clamp(1.125rem, 1.7vw, 1.375rem);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.key-number {
+  font-weight: 800;
+  font-size: clamp(3rem, 10vw, 6rem);
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
+}
+
+.strike {
+  text-decoration: line-through;
+  text-decoration-thickness: 0.07em;
+  text-decoration-color: color-mix(in oklch, var(--ink) 55%, transparent);
+}
+
+/* Phone action bar. */
+.action-bar {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 40;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  background: var(--paper);
+  border-top: 1px solid var(--hair);
+  transform: translateY(110%);
+  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.action-bar::before {
+  content: "";
+  position: absolute;
+  inset: auto 0 100% 0;
+  height: 24px;
+  background: linear-gradient(to top, var(--paper), transparent);
+  pointer-events: none;
+}
+
+.action-bar[data-shown="true"] {
+  transform: none;
+}
+
+@media (max-width: 767px) {
+  main {
+    padding-bottom: 72px;
+  }
+}
+
+@media (min-width: 768px) {
+  .action-bar {
+    display: none;
+  }
+}
+
+/* «Показать разметку»: every Diorama element labelled with its markup. */
+.designation {
+  position: absolute;
+  z-index: 2147483000;
+  pointer-events: none;
+  padding: 0.22rem 0.5rem;
+  border-radius: 6px;
+  background: var(--spot);
+  color: var(--spot-ink);
+  font-family: var(--font-jetbrains), ui-monospace, monospace;
+  font-size: 0.75rem;
+  line-height: 1.3;
+  white-space: nowrap;
+  transform: translateY(-100%);
+}
+
+.designation-frame {
+  position: absolute;
+  z-index: 2147483000;
+  pointer-events: none;
+  border-radius: 8px;
+  outline: 1px dashed var(--spot);
+  outline-offset: 3px;
+}
+
+.part {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  z-index: 60;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 12px;
+}
+
+/* Object page builder: the finished page column, one block per row with its label. Phones get the
+   mobile page edge to edge; wider screens the desktop page, at most 840 px, the width its images are
+   cut for (twice that in pixels). From 1024 px the labels stand beside the blocks and ride along. */
+.builder {
+  display: grid;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.builder-row {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.builder-label {
+  display: grid;
+  grid-template-columns: 2.25rem 1fr;
+  align-items: baseline;
+  margin: 0;
+  transition: opacity 0.5s ease;
+}
+
+.builder-no {
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--spot);
+}
+
+.builder-name {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.builder-note {
+  grid-column: 2;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--ink-mute);
+}
+
+.builder-slot {
+  position: relative;
+  margin-inline: calc(-1 * var(--gutter));
+}
+
+.builder-slot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Wider phones keep the 390 px of the phone page, centred, so the picture stays at twice its pixels. */
+@media (min-width: 391px) and (max-width: 639px) {
+  .builder-slot {
+    width: 390px;
+    margin-inline: calc((100% - 390px) / 2);
+  }
+}
+
+@media (min-width: 640px) {
+  .builder-slot {
+    width: 100%;
+    max-width: 840px;
+    margin-inline: 0;
+    border-radius: 10px;
+  }
+
+  .builder-slot img {
+    border-radius: 10px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .builder {
+    gap: 1.25rem;
+  }
+
+  .builder-row {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 3rem;
+  }
+
+  /* The label rides beside its block, and a leader runs from its name across the gap to the block. */
+  .builder-label {
+    grid-column: 1 / span 4;
+    grid-template-columns: 2.75rem auto minmax(1.5rem, 1fr);
+    align-self: start;
+    position: sticky;
+    top: 30vh;
+    padding-top: 0.25rem;
+  }
+
+  .builder-label::after {
+    content: "";
+    grid-column: 3;
+    grid-row: 1;
+    align-self: center;
+    height: 1px;
+    margin-left: 1rem;
+    margin-right: -3rem;
+    background: var(--rule);
+    transform-origin: left center;
+    transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .builder-no {
+    font-size: 1rem;
+  }
+
+  .builder-name {
+    font-size: clamp(1.125rem, 1.5vw, 1.375rem);
+    letter-spacing: -0.01em;
+  }
+
+  .builder-note {
+    grid-column: 2 / span 2;
+    margin-top: 0.2rem;
+    font-size: 1rem;
+  }
+
+  .builder-slot {
+    grid-column: 5 / span 8;
+    justify-self: end;
+  }
+
+  .builder-row[data-built="0"] .builder-label::after {
+    transform: scaleX(0);
+  }
+
+  .builder-row[data-built="1"] .builder-label::after {
+    animation: builder-lead 1.4s ease-out;
+  }
+}
+
+@keyframes builder-lead {
+  from {
+    background: var(--spot);
+  }
+  to {
+    background: var(--rule);
+  }
+}
+
+/* While the effect runs: a block still on its way dims its label; on landing the label lights up
+   and an amber seam flashes round the slot. Without the effect neither attribute is set. */
+.builder-row[data-built="0"] .builder-label {
+  opacity: 0.35;
+}
+
+.builder-row[data-built="1"] .builder-slot::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid var(--spot);
+  border-radius: inherit;
+  box-shadow: 0 0 32px var(--glow);
+  opacity: 0;
+  pointer-events: none;
+  animation: builder-snap 0.9s ease-out;
+}
+
+@keyframes builder-snap {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Where I worked: a table on wide screens, stacked entries on phones. */
+.revisions th,
+.revisions td {
+  padding: 1rem 1.25rem 1rem 0;
+  vertical-align: top;
+  border-top: 1px solid var(--hair);
+  text-align: left;
+}
+
+.revisions thead th {
+  font-weight: 400;
+  font-size: 0.875rem;
+  color: var(--ink-mute);
+}
+
+.revisions tbody tr:last-child td {
+  border-bottom: 1px solid var(--hair);
+}
+
+@media (max-width: 767px) {
+  .revisions thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .revisions tr {
+    display: grid;
+    gap: 0.15rem;
+    padding: 1.1rem 0;
+    border-top: 1px solid var(--hair);
+  }
+
+  .revisions tbody tr:last-child {
+    border-bottom: 1px solid var(--hair);
+  }
+
+  .revisions td {
+    display: block;
+    padding: 0;
+    border: 0 !important;
+  }
+}
+
+/* Stack: each row's text comes up as its plate leaves the deck and lands (`--away`, set per row
+   by the assembly effect; 0 without it). */
+.stack-row {
+  --away: 0;
+}
+
+.stack-label {
+  opacity: calc(1 - var(--away));
+  transform: translateY(calc(var(--away) * 14px));
+}
+
+.plate {
+  border-radius: 14px;
+}
+
+@media print {
+  .no-print,
+  .action-bar,
+  .stream-field,
+  canvas,
+  header {
+    display: none !important;
+  }
+
+  .sheet {
+    padding: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------------------------
+   The night city (CityStage.tsx, src/effects/city.ts): the world of the Whitewill chapter. An empty
+   box under the whole chapter; the GL city draws across the full width of the screen and follows
+   the chapter's parts (`data-city-part`). The peak is a stretch where the copy holds in the sky
+   over the full city. Without WebGL (state off or failed) and in print the peak closes up.
+   --------------------------------------------------------------------------------------------- */
+.city-world {
+  position: relative;
+}
+
+.city-backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Every line of the chapter keeps a soft dark edge over the lit city (not the GL-drawn heading,
+   which the text-reveal effect draws itself). */
+.city-world :is(h4, p, li, figcaption, blockquote, cite):not([data-dio]) {
+  text-shadow: 0 0 22px var(--paper), 0 0 8px var(--paper);
+}
+
+.city-peak {
+  position: relative;
+  /* The copy comes up as the camera descends, holds over the lit city and leaves with the box. */
+  height: 135svh;
+  padding-top: 30svh;
+}
+
+.city-copy {
+  position: sticky;
+  top: max(92px, 16svh);
+  /* As wide as its lines, so the haze the city draws under it stays at the copy. */
+  width: fit-content;
+  max-width: 100%;
+}
+
+.city-number {
+  font-weight: 800;
+  font-size: clamp(4rem, 12.5vw, 8.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 767px) {
+  .city-peak {
+    height: 128svh;
+    padding-top: 28svh;
+  }
+
+  .city-copy {
+    top: 84px;
+  }
+}
+
+/* Reduced motion: nothing pins or rises. The city is a still picture standing under the peak,
+   which becomes a plain frame: the copy on top, the city below it, both scrolling with the page. */
+@media (prefers-reduced-motion: reduce) {
+  .city-peak {
+    height: max(100svh, 620px);
+    padding-top: 6svh;
+  }
+
+  .city-copy {
+    position: static;
+  }
+}
+
+.city-world:has(> .city-backdrop:is([data-dio-state="off"], [data-dio-state="failed"])) .city-peak {
+  height: auto;
+  padding-block: clamp(24px, 5vw, 64px);
+}
+
+.city-world:has(> .city-backdrop:is([data-dio-state="off"], [data-dio-state="failed"])) .city-copy {
+  position: static;
+}
+
+/* Without WebGL the globe keeps its place as a planet drawn in CSS: a dark disc with a lit rim,
+   a faint halo and a thin orbit, so the sky of the chapter is not left empty. */
+.city-world [data-city-part="moon"]:is([data-dio-state="off"], [data-dio-state="failed"]) {
+  background:
+    radial-gradient(circle closest-side, transparent 97.4%, color-mix(in oklch, var(--spot) 30%, transparent) 98%, transparent 98.8%),
+    radial-gradient(circle closest-side, #1b1917 0 82%, color-mix(in oklch, var(--spot) 55%, #1b1917) 88.6%, color-mix(in oklch, var(--spot) 16%, transparent) 89.6%, transparent 97%);
+}
+
+/* The fallback keeps a trace of the city: its glow low behind the number. */
+.city-world:has(> .city-backdrop:is([data-dio-state="off"], [data-dio-state="failed"])) .city-peak {
+  background: radial-gradient(ellipse closest-side at 58% 62%, color-mix(in oklch, var(--spot) 10%, transparent), transparent);
+}
+
+@media print {
+  .city-peak {
+    height: auto;
+    padding-top: 0;
+  }
+
+  .city-copy {
+    position: static;
+  }
+}
+
+/* Each company in the light of its trade: the accent of the page changes inside its chapter. */
+.theme-whitewill {
+  --spot: oklch(0.85 0.095 88);
+}
+
+.theme-voton {
+  --spot: oklch(0.8 0.12 278);
+}
+
+.theme-teknolab {
+  --spot: oklch(0.74 0.165 30);
+}
+
+/* Stack chips: the main stack lit in the accent, the rest quiet. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 4px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-size: 0.9375rem;
+  line-height: 1.2;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.chip-main {
+  border-color: color-mix(in oklch, var(--spot) 55%, transparent);
+  background: color-mix(in oklch, var(--spot) 10%, transparent);
+  color: var(--ink);
+  font-weight: 600;
 }

@@ -58,3 +58,5 @@ next-env.d.ts
 
 # cursor (local agent state)
 .cursor/
+
+/.next-prod/

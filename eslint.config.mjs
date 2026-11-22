@@ -9,6 +9,12 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
-const eslintConfig = [...compat.extends("next/core-web-vitals", "next/typescript")];
+const eslintConfig = [
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    // Diorama draws plain <img> and <video> elements; the files are pre-sized WebP.
+    rules: { "@next/next/no-img-element": "off" },
+  },
+];
 
 export default eslintConfig;

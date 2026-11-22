@@ -1,32 +1,29 @@
-import type { Metadata } from "next";
-import { Syne, JetBrains_Mono, Cormorant_Garamond } from "next/font/google";
-import { NextIntlClientProvider } from "next-intl";
-import { getMessages, getTranslations } from "next-intl/server";
+import type { Metadata, Viewport } from "next";
+import { Geologica, JetBrains_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
+import { NextIntlClientProvider } from "next-intl";
+import { setRequestLocale } from "next-intl/server";
 import { routing } from "@/lib/i18n/routing";
-import { resolveSiteOrigin, buildPageAlternates } from "@/lib/site";
-import { DeferredSmoothScroll } from "@/components/providers/DeferredSmoothScroll";
+import { buildPageAlternates, resolveSiteOrigin } from "@/lib/site";
+import { getContent, isLocale } from "@/content";
 import { Header } from "@/components/layout/Header";
-import { ThemeScript } from "@/components/layout/ThemeScript";
-import { SkipLink } from "@/components/layout/SkipLink";
+import { Footer } from "@/components/layout/Footer";
+import { ActionBar } from "@/components/layout/ActionBar";
+import { DioramaStart } from "@/components/diorama/DioramaStart";
+import { Designations } from "@/components/diorama/Designations";
 import { PersonJsonLd } from "@/components/seo/PersonJsonLd";
 import "../globals.css";
 
-const syne = Syne({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-syne",
+const geologica = Geologica({
+  subsets: ["latin", "cyrillic"],
+  variable: "--font-geologica",
   display: "swap",
 });
 
 const jetbrains = JetBrains_Mono({
   subsets: ["latin", "cyrillic"],
+  weight: ["400", "600"],
   variable: "--font-jetbrains",
-  display: "swap",
-});
-
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  variable: "--font-cormorant",
   display: "swap",
   preload: false,
 });
@@ -35,64 +32,44 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "meta" });
-  const keywords = t.raw("keywords") as string[];
-  const siteOrigin = await resolveSiteOrigin();
-  const alternates = buildPageAlternates(locale, siteOrigin);
-  const pageUrl = alternates.canonical;
-  const ogLocale = locale === "ru" ? "ru_RU" : "en_US";
-  const alternateOgLocale = locale === "ru" ? "en_US" : "ru_RU";
+export const viewport: Viewport = {
+  themeColor: "#121110",
+  colorScheme: "dark",
+};
 
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const c = getContent(locale);
+  const origin = await resolveSiteOrigin();
+  const alternates = buildPageAlternates(locale, origin);
+  const image = { url: `/og/${locale === "en" ? "en" : "ru"}`, width: 1200, height: 630, alt: c.meta.ogAlt };
   return {
-    metadataBase: new URL(siteOrigin),
-    title: t("title"),
-    description: t("description"),
-    keywords,
-    authors: [{ name: locale === "ru" ? "Михаил Калачёв" : "Mikhail Kalachev" }],
-    creator: locale === "ru" ? "Михаил Калачёв" : "Mikhail Kalachev",
+    metadataBase: new URL(origin),
+    title: { default: c.meta.title, template: `%s · ${c.hero.name}` },
+    description: c.meta.description,
+    keywords: c.meta.keywords,
+    authors: [{ name: c.hero.name, url: origin }],
+    creator: c.hero.name,
+    alternates,
     robots: {
       index: true,
       follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        "max-image-preview": "large",
-        "max-snippet": -1,
-      },
+      googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
     },
-    alternates,
-    icons: {
-      icon: "/images/icon.ico",
-    },
+    icons: { icon: "/images/icon.ico" },
     openGraph: {
-      title: t("title"),
-      description: t("description"),
-      type: "website",
-      url: pageUrl,
-      siteName: t("title"),
-      locale: ogLocale,
-      alternateLocale: [alternateOgLocale],
-      images: [
-        {
-          url: "/images/profile.png",
-          width: 1200,
-          height: 1500,
-          alt: t("ogImageAlt"),
-        },
-      ],
+      type: "profile",
+      firstName: locale === "en" ? "Mikhail" : "Михаил",
+      lastName: locale === "en" ? "Kalachev" : "Калачёв",
+      title: c.meta.title,
+      description: c.meta.description,
+      url: alternates.canonical,
+      siteName: c.hero.name,
+      locale: locale === "en" ? "en_US" : "ru_RU",
+      alternateLocale: [locale === "en" ? "ru_RU" : "en_US"],
+      images: [image],
     },
-    twitter: {
-      card: "summary_large_image",
-      title: t("title"),
-      description: t("description"),
-      images: ["/images/profile.png"],
-    },
+    twitter: { card: "summary_large_image", title: c.meta.title, description: c.meta.description, images: [image] },
   };
 }
 
@@ -104,32 +81,28 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-
-  if (!routing.locales.includes(locale as "ru" | "en")) {
-    notFound();
-  }
-
-  const messages = await getMessages();
-  const siteOrigin = await resolveSiteOrigin();
+  if (!isLocale(locale)) notFound();
+  setRequestLocale(locale);
+  const c = getContent(locale);
+  const origin = await resolveSiteOrigin();
 
   return (
-    <html
-      lang={locale}
-      className={`dark ${syne.variable} ${jetbrains.variable} ${cormorant.variable}`}
-      suppressHydrationWarning
-    >
-      <head>
-        <ThemeScript />
-      </head>
-      <body className="font-display antialiased">
-        <PersonJsonLd locale={locale} siteOrigin={siteOrigin} />
-        <NextIntlClientProvider messages={messages}>
-          <DeferredSmoothScroll>
-            <SkipLink />
-            <div className="grain" aria-hidden />
-            <Header />
-            <main id="main">{children}</main>
-          </DeferredSmoothScroll>
+    <html lang={locale} className={`${geologica.variable} ${jetbrains.variable}`}>
+      <body>
+        <PersonJsonLd content={c} origin={origin} />
+        <NextIntlClientProvider locale={locale} messages={{}}>
+          {/* First in the page: the stream under every copy. Last: its lifted part over them. */}
+          <div className="stream-field" data-dio="stream" data-dio-load="eager" aria-hidden />
+          <a href="#main" className="skip-link">
+            {c.ui.skip}
+          </a>
+          <Header content={c} />
+          <main id="main">{children}</main>
+          <Footer content={c} />
+          <ActionBar content={c} />
+          <Designations />
+          <div className="stream-field" data-dio="stream" data-dio-front="true" data-dio-load="eager" aria-hidden />
+          <DioramaStart />
         </NextIntlClientProvider>
       </body>
     </html>

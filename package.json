@@ -6,26 +6,19 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@gsap/react": "^2.1.2",
-    "@radix-ui/react-slot": "^1.2.3",
-    "@react-three/drei": "^10.0.6",
-    "@react-three/fiber": "^9.1.2",
-    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "framer-motion": "^12.6.3",
-    "gsap": "^3.12.7",
-    "lenis": "^1.2.3",
     "lucide-react": "^0.487.0",
-    "matter-js": "^0.20.0",
     "next": "^15.2.4",
     "next-intl": "^4.0.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.1.0",
-    "three": "^0.175.0"
+    "three": "^0.187.0",
+    "@dioramajs/diorama": "^0.1.1"
   },
   "browserslist": [
     "chrome >= 111",
@@ -36,11 +29,10 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "@types/matter-js": "^0.19.8",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/three": "^0.175.0",
+    "@types/three": "^0.187.0",
     "eslint": "^9",
     "eslint-config-next": "^15.2.4",
     "tailwindcss": "^4",
