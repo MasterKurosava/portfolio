@@ -43,6 +43,10 @@ html {
   text-size-adjust: 100%;
   scroll-padding-top: 76px;
   scrollbar-color: color-mix(in oklch, var(--ink) 30%, transparent) var(--paper);
+  /* The loader holds the scroll (overflow: hidden): without a kept gutter the scrollbar would
+     appear as it leaves, narrowing the page under the intros, so every effect on the first screen
+     measured and drew itself again mid-flight and the canvas resized. */
+  scrollbar-gutter: stable;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -1193,27 +1197,12 @@ html.lenis {
 }
 
 /*
- * The hero's portrait and name play an intro drawn by Diorama: they wait hidden from the first
- * paint, before any script runs, so the server-rendered photo never flashes before its reveal.
- * Diorama takes over with data-dio-state (hidden while entering or drawn); an effect that is off or
- * failed shows the element at once, and without a script it shows after 3 s.
+ * The hero's portrait and name (`data-dio-intro`) play an intro drawn by Diorama. Nothing in CSS
+ * hides them: the loader covers the first paint, and on a page reached later Diorama veils them
+ * (data-dio-state="entering") before they paint. Never give them an opacity of their own: Diorama
+ * draws an element's copy at the element's CSS opacity, so a hidden element hides its intro too
+ * (an opacity-0 wait of 3 s played the first second of both intros unseen, then they popped in).
  */
-[data-dio-intro]:not([data-dio-state="off"], [data-dio-state="failed"]) {
-  animation: dio-intro-wait 0s 3s both;
-}
-@keyframes dio-intro-wait {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  [data-dio-intro] {
-    animation: none;
-  }
-}
 
 /*
  * The loader (components/layout/Loader): the stage before the page. A beam draws the monogram,
@@ -1237,6 +1226,8 @@ html[data-loading] {
     #121110;
   transition: transform 1.15s cubic-bezier(0.76, 0, 0.24, 1);
   animation: loader-gone 0.6s ease 8s forwards;
+  /* Its own layer from the first paint, so the lift starts without rastering the whole screen. */
+  will-change: transform;
 }
 .loader::after {
   content: "";
@@ -1260,10 +1251,21 @@ html:not([data-loading]) .loader::after {
 .loader[data-done] {
   display: none;
 }
+/*
+ * The monogram is drawn once and never repainted: a window opens over it left to right with a
+ * beam on its edge (two opposite translations that cancel out for the monogram), and a halo
+ * breathes behind it by opacity. A stroke-dashoffset draw and an animated drop-shadow repaint on
+ * the main thread, so they stuttered while the page hydrated and the 3D started.
+ */
 .loader-mark {
+  position: relative;
   width: clamp(104px, 18vw, 148px);
-  height: auto;
-  overflow: visible;
+  aspect-ratio: 142 / 82;
+}
+.loader-mark svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 .loader-mark path {
   fill: none;
@@ -1271,15 +1273,48 @@ html:not([data-loading]) .loader::after {
   stroke-width: 3.2;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
   filter: drop-shadow(0 0 5px rgb(242 180 90 / 0.65));
-  animation:
-    loader-draw 1.5s cubic-bezier(0.65, 0, 0.35, 1) 0.2s forwards,
-    loader-glow 2.6s ease-in-out 1.8s infinite;
 }
-.loader-mark path + path {
-  animation-delay: 0.65s, 2.2s;
+.loader-wipe,
+.loader-wipe-in,
+.loader-beam,
+.loader-halo {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+.loader-wipe {
+  overflow: hidden;
+  transform: translateX(-100%);
+  animation: loader-open 1.5s cubic-bezier(0.65, 0, 0.35, 1) 0.2s forwards;
+}
+.loader-wipe-in {
+  transform: translateX(100%);
+  animation: loader-open 1.5s cubic-bezier(0.65, 0, 0.35, 1) 0.2s forwards;
+}
+.loader-beam {
+  inset: -16% 0;
+  opacity: 0;
+  transform: translateX(-100%);
+  animation:
+    loader-open 1.5s cubic-bezier(0.65, 0, 0.35, 1) 0.2s forwards,
+    loader-beam 1.5s linear 0.2s forwards;
+}
+.loader-beam::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -1px;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, transparent, #ffe6bd 28%, #fff8ec 50%, #ffe6bd 72%, transparent);
+  box-shadow: 0 0 12px 2px rgb(242 180 90 / 0.7);
+}
+.loader-halo {
+  inset: -60% -35%;
+  background: radial-gradient(closest-side, rgb(242 180 90 / 0.2), transparent);
+  opacity: 0;
+  animation: loader-breathe 2.6s ease-in-out 1.7s infinite;
 }
 .loader-line {
   position: relative;
@@ -1315,14 +1350,23 @@ html:not([data-loading]) .loader::after {
   opacity: 0;
   animation: loader-in 0.9s ease 1s forwards;
 }
-@keyframes loader-draw {
+@keyframes loader-open {
   to {
-    stroke-dashoffset: 0;
+    transform: translateX(0);
   }
 }
-@keyframes loader-glow {
+@keyframes loader-beam {
+  8%,
+  82% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes loader-breathe {
   50% {
-    filter: drop-shadow(0 0 12px rgb(242 180 90 / 0.95));
+    opacity: 1;
   }
 }
 @keyframes loader-sweep {
@@ -1352,9 +1396,14 @@ html:not([data-loading]) .loader::after {
     transform: none;
     opacity: 0;
   }
-  .loader-mark path {
+  .loader-wipe,
+  .loader-wipe-in {
     animation: none;
-    stroke-dashoffset: 0;
+    transform: none;
+  }
+  .loader-beam,
+  .loader-halo {
+    display: none;
   }
   .loader-line::after {
     animation: none;

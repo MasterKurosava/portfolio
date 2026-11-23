@@ -19,11 +19,14 @@ export function Hero({ content: c }: { content: Content }) {
     <section id="spec" aria-labelledby="name" className="relative scroll-mt-16 overflow-hidden">
       <div className="mx-auto grid max-w-[calc(var(--page-max)+2*var(--gutter))] gap-x-12 gap-y-10 px-[var(--gutter)] pb-14 pt-10 max-md:gap-y-0 max-md:pb-10 max-md:pt-0 md:grid-cols-12 md:gap-y-12 md:pb-16 md:pt-10">
         <div className="max-md:contents md:col-span-7">
-          {/* The name gathers out of the stream of light that runs through the page: `assemble` is
-              attached once the loader has gone (DioramaStart), so the reader sees it play. */}
+          {/* The name gathers out of the stream of light that runs through the page. It is set up
+              and compiled under the loader and held there (data-loader-hold, DioramaStart), so it
+              plays in front of the reader with nothing left to build. */}
           <h1
             id="name"
+            data-dio="assemble"
             data-dio-intro
+            data-loader-hold
             data-dio-style="dashes"
             data-dio-color="var(--ink)"
             data-dio-accent="var(--spot)"
@@ -107,6 +110,7 @@ export function Hero({ content: c }: { content: Content }) {
               <dd
                 className="m-0 whitespace-nowrap text-[clamp(2.5rem,10vw,3.5rem)] font-[800] leading-none tracking-[-0.045em] md:text-[clamp(2.25rem,4.2vw,3.5rem)]"
                 data-dio="scramble"
+                data-loader-hold
                 data-dio-when="(min-width: 768px)"
                 data-dio-chars="digits"
                 data-dio-duration="1"
@@ -125,6 +129,7 @@ export function Hero({ content: c }: { content: Content }) {
         <h2
           className="m-0 text-[clamp(1.75rem,3.2vw,2.5rem)] font-[760] leading-tight tracking-[-0.03em] md:col-span-3"
           data-dio="text-reveal"
+          data-loader-hold
           data-dio-when="(min-width: 768px)"
           data-dio-by="word"
           data-dio-motion="rise"
