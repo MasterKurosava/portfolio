@@ -19,10 +19,10 @@ export function Hero({ content: c }: { content: Content }) {
     <section id="spec" aria-labelledby="name" className="relative scroll-mt-16 overflow-hidden">
       <div className="mx-auto grid max-w-[calc(var(--page-max)+2*var(--gutter))] gap-x-12 gap-y-10 px-[var(--gutter)] pb-14 pt-10 max-md:gap-y-0 max-md:pb-10 max-md:pt-0 md:grid-cols-12 md:gap-y-12 md:pb-16 md:pt-10">
         <div className="max-md:contents md:col-span-7">
-          {/* The name gathers out of the stream of light that runs through the page. */}
+          {/* The name gathers out of the stream of light that runs through the page: `assemble` is
+              attached once the loader has gone (DioramaStart), so the reader sees it play. */}
           <h1
             id="name"
-            data-dio="assemble"
             data-dio-intro
             data-dio-style="dashes"
             data-dio-color="var(--ink)"
@@ -84,7 +84,7 @@ export function Hero({ content: c }: { content: Content }) {
               width={600}
               height={634}
               fetchPriority="high"
-              data-dio="pixel-portrait tilt crisp"
+              data-dio="light-portrait tilt crisp"
               data-dio-intro
               data-dio-tilt="7"
               data-dio-lift="18"

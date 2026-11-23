@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Lenis from "lenis";
-import { start } from "@dioramajs/diorama";
+import { type App, ready, start } from "@dioramajs/diorama";
 import { prepareAhead, warmPipelines } from "@/lib/diorama-prepare";
 
 /** Starts the one Diorama app of the site after hydration. */
@@ -46,7 +46,61 @@ export function DioramaStart() {
       loaded.then(() => new Promise((resolve) => setTimeout(resolve, 2200))),
       warmPipelines(app),
     );
+    lift(app);
     return () => void app;
   }, []);
   return null;
+}
+
+/** The loader stays at least this long, ms since the navigation started: no flash on a fast load. */
+const SHORTEST = 1300;
+/** And at most this long, then the page shows whatever is ready. */
+const LONGEST = 8000;
+/** States after which an intro element has drawn, or will not. */
+const SETTLED = new Set(["drawn", "off", "failed"]);
+
+/**
+ * Lifts the loader (components/layout/Loader) once the first screen is ready: the fonts are in and
+ * every intro picture (`data-dio-intro` with an effect) has drawn its first frame, or the 3D is off
+ * or unavailable. The loader's line follows the assets wave meanwhile. Then the portrait plays and
+ * the name's `assemble` is attached, so both start in front of the reader.
+ */
+function lift(app: App): void {
+  const root = document.documentElement;
+  const loader = document.querySelector<HTMLElement>("[data-loader]");
+  if (!loader || !root.hasAttribute("data-loading")) return;
+  let gone = false;
+  const finish = (): void => {
+    if (gone) return;
+    gone = true;
+    observer.disconnect();
+    setTimeout(
+      () => {
+        loader.style.setProperty("--p", "1");
+        root.removeAttribute("data-loading");
+        window.dispatchEvent(new Event("portfolio:ready"));
+        if (document.getElementById("name")) app.attach("#name", "assemble");
+        setTimeout(() => loader.remove(), 1600);
+      },
+      Math.max(0, SHORTEST - performance.now()),
+    );
+  };
+  setTimeout(finish, Math.max(0, LONGEST - performance.now()));
+  const pictures = [...document.querySelectorAll("[data-dio-intro][data-dio]")];
+  const drawn = (): boolean =>
+    pictures.every((el) => SETTLED.has(el.getAttribute("data-dio-state") ?? ""));
+  const fonts = document.fonts?.ready ?? Promise.resolve();
+  const observer = new MutationObserver(() => {
+    if (drawn()) void fonts.then(finish);
+  });
+  for (const el of pictures) observer.observe(el, { attributeFilter: ["data-dio-state"] });
+  if (drawn()) void fonts.then(finish);
+  void ready(app)
+    .then((started) => {
+      started.effects.status.subscribe((status) => {
+        if (status === "off" || status === "unavailable") finish();
+      });
+      started.assets.progress.subscribe((value) => loader.style.setProperty("--p", String(value)));
+    })
+    .catch(finish);
 }

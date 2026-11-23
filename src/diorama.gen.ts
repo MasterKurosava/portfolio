@@ -6,7 +6,7 @@ export const effects: EffectEntries = {
   chain: { load: () => import('./effects/chain'), params: { color: { '~kind': 'color', value: '#8b7bff' }, color2: { '~kind': 'color', value: '#4fe3ff' }, period: 2.5, hash: true, reflection: true } },
   city: { load: () => import('./effects/city'), params: { lit: { '~kind': 'color', value: '#efbb62' }, warm: { '~kind': 'color', value: '#fff0d4' }, haze: { '~kind': 'color', value: '#201a14' }, night: { '~kind': 'color', value: '#121110' } } },
   crisp: () => import('./effects/crisp'),
-  'pixel-portrait': { load: () => import('./effects/pixel-portrait'), params: { cell: 16, levels: 6, assemble: 1.6, hold: 0.4, resolve: 1.8, delay: 0.15 }, intro: true },
+  'light-portrait': { load: () => import('./effects/light-portrait'), params: { sweep: 1.5, focus: 2.1, blur: 14, zoom: 1.06, delay: 0.1 }, intro: true },
   stream: { load: () => import('./effects/stream'), params: { color: { '~kind': 'color', value: '#f2b45a' }, hot: { '~kind': 'color', value: '#fff0d2' }, density: 1, speed: 0.012, width: 34, front: false } },
 }
 
@@ -16,7 +16,7 @@ declare module '@dioramajs/diorama' {
     chain: typeof import('./effects/chain').default
     city: typeof import('./effects/city').default
     crisp: typeof import('./effects/crisp').default
-    'pixel-portrait': typeof import('./effects/pixel-portrait').default
+    'light-portrait': typeof import('./effects/light-portrait').default
     stream: typeof import('./effects/stream').default
   }
 }

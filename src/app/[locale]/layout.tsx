@@ -10,6 +10,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ActionBar } from "@/components/layout/ActionBar";
 import { DioramaStart } from "@/components/diorama/DioramaStart";
+import { Loader } from "@/components/layout/Loader";
 import { Designations } from "@/components/diorama/Designations";
 import { PersonJsonLd } from "@/components/seo/PersonJsonLd";
 import "../globals.css";
@@ -95,8 +96,9 @@ export default async function LocaleLayout({
   const origin = await resolveSiteOrigin();
 
   return (
-    <html lang={locale} className={`${geologica.variable} ${jetbrains.variable}`}>
+    <html lang={locale} className={`${geologica.variable} ${jetbrains.variable}`} data-loading="">
       <body>
+        <Loader name={c.hero.name} />
         <PersonJsonLd content={c} origin={origin} />
         <NextIntlClientProvider locale={locale} messages={{}}>
           {/* First in the page: the stream under every copy. Last: its lifted part over them. */}
