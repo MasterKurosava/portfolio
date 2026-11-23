@@ -1191,3 +1191,26 @@ html.lenis {
     transition: none;
   }
 }
+
+/*
+ * The hero's portrait and name play an intro drawn by Diorama: they wait hidden from the first
+ * paint, before any script runs, so the server-rendered photo never flashes before its pixel art.
+ * Diorama takes over with data-dio-state (hidden while entering or drawn); an effect that is off or
+ * failed shows the element at once, and without a script it shows after 3 s.
+ */
+[data-dio-intro]:not([data-dio-state="off"], [data-dio-state="failed"]) {
+  animation: dio-intro-wait 0s 3s both;
+}
+@keyframes dio-intro-wait {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-dio-intro] {
+    animation: none;
+  }
+}

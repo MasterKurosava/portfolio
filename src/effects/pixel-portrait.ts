@@ -1,11 +1,11 @@
 // pixel-portrait: the portrait first assembles as pixel art, square by square from the bottom up
-// in a small palette, then the squares split in half, step by step, while the palette melts into
-// the colours of the photo, until the photo itself is there. It plays once, as the page opens
+// in a small palette, then the squares shrink smoothly while the palette melts into the colours of
+// the photo, until the photo itself is there. It plays once, as the page opens
 // (the intro keeps the DOM picture hidden until the first frame) or as the picture scrolls in.
 // Under reduced motion, or for a picture already seen as DOM, it shows the photo at once.
 import { effect } from "@dioramajs/diorama";
 import { ease, inView } from "@dioramajs/diorama/kit";
-import { abs, ceil, clamp, dot, exp2, floor, fract, log2, max, mix, pow, smoothstep, step, uniform, vec2, vec3, vec4 } from "three/tsl";
+import { abs, clamp, dot, exp2, floor, fract, log2, max, mix, pow, smoothstep, step, uniform, vec2, vec3, vec4 } from "three/tsl";
 import type { Node } from "three/webgpu";
 import { Vector2 } from "three/webgpu";
 
@@ -27,16 +27,16 @@ const hash = (p: V2): F => {
 
 export default effect(
   {
-    /** Side of the pixel-art squares, CSS px; a power of two halves evenly to the photo. */
+    /** Side of the pixel-art squares, CSS px. */
     cell: 16,
     /** Tones per colour channel of the pixel-art palette. */
     levels: 6,
     /** Seconds the squares take to assemble. */
-    assemble: 1.4,
+    assemble: 1.6,
     /** Seconds the finished pixel art holds before it resolves. */
-    hold: 0.35,
+    hold: 0.4,
     /** Seconds from pixel art to the photo. */
-    resolve: 1.3,
+    resolve: 1.8,
     /** Seconds after the picture comes into view before it starts. */
     delay: 0.15,
   },
@@ -50,33 +50,37 @@ export default effect(
       const cell = max(u.cell as unknown as F, 2);
       // CSS px from the centre of the box, y up.
       const point = box.sub(0.5).mul(size);
-      // Assembly: each square pops in at its own moment, the lower rows first, with some scatter.
+      // Assembly: each square fades in at its own moment, the lower rows first, with some scatter,
+      // growing from three quarters to its full size.
       const grid = point.div(cell);
-      const id = floor(grid);
-      const order = hash(id).mul(0.55).add(box.y.mul(0.45));
-      const start = order.mul(0.85);
-      const pop = smoothstep(start, start.add(0.12), look.x);
-      // A square fades in as it grows from three quarters to its full size.
-      const reach = mix(0.375, 0.5, pop);
+      const order = hash(floor(grid)).mul(0.5).add(box.y.mul(0.5));
+      const start = order.mul(0.8);
+      const pop = smoothstep(start, start.add(0.2), look.x);
+      const reach = mix(0.3, 0.5, pop);
       const local = abs(fract(grid).sub(0.5));
       const inside = step(local.x, reach).mul(step(local.y, reach)).mul(pop);
-      // Resolve: the squares halve, cell, cell / 2 ... 2 px, then the photo.
-      const maxLevel = log2(cell);
-      const levels = max(ceil(maxLevel), 1);
-      const level = ceil(look.y.oneMinus().mul(levels)).div(levels);
-      const side = exp2(level.mul(maxLevel)) as unknown as F;
-      const center = floor(point.div(side)).add(0.5);
-      const at = (dx: number, dy: number) =>
-        sample(center.add(vec2(dx, dy)).mul(side).div(max(size, 1)).add(0.5) as unknown as V2);
-      const block = at(-0.25, -0.25).add(at(0.25, -0.25)).add(at(-0.25, 0.25)).add(at(0.25, 0.25)).mul(0.25);
-      // The pixel-art palette: a few tones per channel, melting into the photo's own colours.
-      // Quantized in sRGB, as the eye sees the steps; in linear light the darks fall to black.
+      // Resolve: the square side shrinks continuously in log2, from the cell to one px. Between
+      // two power-of-two sides the larger blocks fade into the smaller, so nothing jumps.
+      const scale = log2(cell).mul(look.y.oneMinus());
+      const lower = floor(scale);
+      const blend = smoothstep(0.2, 0.8, scale.sub(lower));
+      const blockOf = (side: F) => {
+        const center = floor(point.div(side)).add(0.5);
+        const at = (dx: number, dy: number) =>
+          sample(center.add(vec2(dx, dy)).mul(side).div(max(size, 1)).add(0.5) as unknown as V2);
+        return at(-0.25, -0.25).add(at(0.25, -0.25)).add(at(-0.25, 0.25)).add(at(0.25, 0.25)).mul(0.25);
+      };
+      const small = exp2(lower) as unknown as F;
+      const block = mix(blockOf(small), blockOf(small.mul(2)), blend);
+      const side = exp2(scale) as unknown as F;
+      // The pixel-art palette, a few tones per channel quantized in sRGB as the eye sees the
+      // steps, melting into the photo's own colours over the first half of the resolve.
       const tones = max(u.levels as unknown as F, 2);
       const srgb = clamp(pow(block.rgb, vec3(1 / 2.2)).sub(0.5).mul(1.12).add(0.5), 0, 1);
       const art = pow(floor(srgb.mul(tones).add(0.5)).div(tones), vec3(2.2));
-      const tone = mix(art, block.rgb, smoothstep(0, 0.7, look.y));
-      // Below two px a square is about a pixel: the photo itself takes over.
-      const blocky = smoothstep(1, 2, side);
+      const tone = mix(art, block.rgb, smoothstep(0, 0.55, look.y));
+      // Below two px a block is about a pixel: the photo itself takes over.
+      const blocky = smoothstep(1, 2.5, side);
       const rgb = mix(color.rgb, tone, blocky);
       const alpha = mix(color.a, block.a, blocky).mul(inside);
       return vec4(rgb, alpha);

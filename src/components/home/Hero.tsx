@@ -23,6 +23,7 @@ export function Hero({ content: c }: { content: Content }) {
           <h1
             id="name"
             data-dio="assemble"
+            data-dio-intro
             data-dio-style="dashes"
             data-dio-color="var(--ink)"
             data-dio-accent="var(--spot)"
@@ -84,6 +85,7 @@ export function Hero({ content: c }: { content: Content }) {
               height={634}
               fetchPriority="high"
               data-dio="pixel-portrait tilt crisp"
+              data-dio-intro
               data-dio-tilt="7"
               data-dio-lift="18"
               data-dio-perspective="1400"
