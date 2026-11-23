@@ -1257,6 +1257,9 @@ html:not([data-loading]) .loader {
 html:not([data-loading]) .loader::after {
   opacity: 1;
 }
+.loader[data-done] {
+  display: none;
+}
 .loader-mark {
   width: clamp(104px, 18vw, 148px);
   height: auto;

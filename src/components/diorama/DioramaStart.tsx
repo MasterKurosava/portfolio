@@ -80,7 +80,8 @@ function lift(app: App): void {
         root.removeAttribute("data-loading");
         window.dispatchEvent(new Event("portfolio:ready"));
         if (document.getElementById("name")) app.attach("#name", "assemble");
-        setTimeout(() => loader.remove(), 1600);
+        // React owns the loader's node: hidden, never removed, or the next render would break.
+        setTimeout(() => loader.setAttribute("data-done", ""), 1600);
       },
       Math.max(0, SHORTEST - performance.now()),
     );
