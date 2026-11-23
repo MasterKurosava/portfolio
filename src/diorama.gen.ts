@@ -6,6 +6,7 @@ export const effects: EffectEntries = {
   chain: { load: () => import('./effects/chain'), params: { color: { '~kind': 'color', value: '#8b7bff' }, color2: { '~kind': 'color', value: '#4fe3ff' }, period: 2.5, hash: true, reflection: true } },
   city: { load: () => import('./effects/city'), params: { lit: { '~kind': 'color', value: '#efbb62' }, warm: { '~kind': 'color', value: '#fff0d4' }, haze: { '~kind': 'color', value: '#201a14' }, night: { '~kind': 'color', value: '#121110' } } },
   crisp: () => import('./effects/crisp'),
+  'pixel-portrait': { load: () => import('./effects/pixel-portrait'), params: { cell: 16, levels: 6, assemble: 1.4, hold: 0.35, resolve: 1.3, delay: 0.15 }, intro: true },
   stream: { load: () => import('./effects/stream'), params: { color: { '~kind': 'color', value: '#f2b45a' }, hot: { '~kind': 'color', value: '#fff0d2' }, density: 1, speed: 0.012, width: 34, front: false } },
 }
 
@@ -15,6 +16,7 @@ declare module '@dioramajs/diorama' {
     chain: typeof import('./effects/chain').default
     city: typeof import('./effects/city').default
     crisp: typeof import('./effects/crisp').default
+    'pixel-portrait': typeof import('./effects/pixel-portrait').default
     stream: typeof import('./effects/stream').default
   }
 }

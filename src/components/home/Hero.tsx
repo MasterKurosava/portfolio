@@ -83,7 +83,7 @@ export function Hero({ content: c }: { content: Content }) {
               width={600}
               height={634}
               fetchPriority="high"
-              data-dio="tilt crisp"
+              data-dio="pixel-portrait tilt crisp"
               data-dio-tilt="7"
               data-dio-lift="18"
               data-dio-perspective="1400"
