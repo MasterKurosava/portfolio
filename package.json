@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@dioramajs/diorama": "^0.1.1",
+    "@dioramajs/diorama": "^0.1.3",
     "clsx": "^2.1.1",
     "lenis": "^1.3.27",
     "lucide-react": "^0.487.0",
